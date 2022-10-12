@@ -2,6 +2,11 @@ cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
 
 option(HAVE_EMX "Build with EMX")
 
+if(UNIX)
+  add_compile_options(-fsanitize=address,undefined -fno-sanitize-recover=all)
+  add_link_options(-fsanitize=address,undefined -fno-sanitize-recover=all)
+endif()
+
 if(HAVE_EMX)
   message("-- Building with EMX")
   set (quickfix_PROJECT_NAME quickfix-emx)
