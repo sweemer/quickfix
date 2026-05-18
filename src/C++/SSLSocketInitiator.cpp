@@ -222,10 +222,28 @@ void SSLSocketInitiator::onInitialize(const SessionSettings &s) EXCEPT(RuntimeEr
       throw RuntimeError("Failed to set certificate");
     }
 
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+    /* EVP_PKEY_set1_RSA is deprecated in OpenSSL 3.0, but is the only bridge
+     * from the legacy RSA* API (used in setCertAndKey's public interface) to
+     * the modern EVP_PKEY API required by SSL_CTX_use_PrivateKey. */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+    {
+      EVP_PKEY *pkey = EVP_PKEY_new();
+      if (!pkey || EVP_PKEY_set1_RSA(pkey, m_key) <= 0 || SSL_CTX_use_PrivateKey(m_ctx, pkey) <= 0) {
+        EVP_PKEY_free(pkey);
+        ssl_term();
+        throw RuntimeError("Failed to set key");
+      }
+      EVP_PKEY_free(pkey);
+    }
+#pragma GCC diagnostic pop
+#else
     if (SSL_CTX_use_RSAPrivateKey(m_ctx, m_key) <= 0) {
       ssl_term();
       throw RuntimeError("Failed to set key");
     }
+#endif
   } else if (!loadSSLCert(m_ctx, false, s, getLog(), SSLSocketInitiator::passwordHandleCB, this, errStr)) {
     ssl_term();
     throw RuntimeError(errStr);

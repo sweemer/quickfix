@@ -155,6 +155,7 @@
 namespace FIX {
 
 #ifndef OPENSSL_NO_DH
+#if OPENSSL_VERSION_NUMBER < 0x30000000L
 static DH *load_dh_param(const char *dhfile) {
   DH *ret = NULL;
   BIO *bio;
@@ -302,7 +303,8 @@ DH *ssl_callback_TmpDH(SSL *ssl, int exportvar, int keylen) {
 
   return modssl_get_dh_params(keylen);
 }
-#endif
+#endif /* OPENSSL_VERSION_NUMBER < 0x30000000L */
+#endif /* !OPENSSL_NO_DH */
 
 /* Mutex to protect ssl init and terminate */
 static Mutex ssl_mutex;
@@ -338,14 +340,16 @@ void ssl_init() {
 #endif
   SSL_library_init();           // Initialize OpenSSL's SSL libraries
   SSL_load_error_strings();     // Load SSL error strings
-  ERR_load_BIO_strings();       // Load BIO error strings
+#if OPENSSL_VERSION_NUMBER < 0x30000000L
+  ERR_load_BIO_strings();
+#endif
   OpenSSL_add_all_algorithms(); // Load all available encryption algorithms
 
   ssl_rand_seed();
 
   ssl_initialized = 1;
 
-#ifndef OPENSSL_NO_DH
+#if !defined(OPENSSL_NO_DH) && OPENSSL_VERSION_NUMBER < 0x30000000L
   init_dh_params();
 #endif
 
@@ -363,7 +367,7 @@ void ssl_term() {
 
   thread_cleanup();
 
-#ifndef OPENSSL_NO_DH
+#if !defined(OPENSSL_NO_DH) && OPENSSL_VERSION_NUMBER < 0x30000000L
   free_dh_params();
 #endif
 }
@@ -1019,33 +1023,37 @@ void setCtxOptions(SSL_CTX *ctx, long options) {
 
 int enable_DH_ECDH(SSL_CTX *ctx, const char *certFile) {
 #ifndef OPENSSL_NO_DH
-  int no_dhe = 0;
-  if (!no_dhe) {
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+  SSL_CTX_set_dh_auto(ctx, 1);
+#else
+  {
     DH *dh = NULL;
-
     if (certFile) {
       dh = load_dh_param(certFile);
     }
-
     if (dh != NULL) {
       SSL_CTX_set_tmp_dh(ctx, dh);
-
       DH_free(dh);
     } else {
       SSL_CTX_set_tmp_dh_callback(ctx, ssl_callback_TmpDH);
     }
-    //(void)BIO_flush(bio_s_out);
   }
+#endif
 #endif
 
 #ifndef OPENSSL_NO_ECDH
-  EC_KEY *ecdh;
-  ecdh = EC_KEY_new_by_curve_name(NID_X9_62_prime256v1);
-  if (ecdh == NULL) {
-    return 2;
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L
+  SSL_CTX_set1_groups_list(ctx, "P-256:P-384:P-521");
+#else
+  {
+    EC_KEY *ecdh = EC_KEY_new_by_curve_name(NID_X9_62_prime256v1);
+    if (ecdh == NULL) {
+      return 2;
+    }
+    SSL_CTX_set_tmp_ecdh(ctx, ecdh);
+    EC_KEY_free(ecdh);
   }
-  SSL_CTX_set_tmp_ecdh(ctx, ecdh);
-  EC_KEY_free(ecdh);
+#endif
 #endif
 
   return 0;
