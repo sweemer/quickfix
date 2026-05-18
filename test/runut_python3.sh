@@ -2,8 +2,8 @@
 
 DIR=`pwd`
 
-cd ../src/python
-./test-python3.sh
+cd ../src/python3
+./test.sh
 RESULT=$?
 cd $DIR
 exit $RESULT
