@@ -232,11 +232,7 @@ std::string &Message::toString(std::string &str, int beginStringField, int bodyL
   m_header.setField(IntField(bodyLengthField, bodyLen));
   m_trailer.setField(CheckSumField(checkSumField, totalChecksum));
 
-#if defined(_MSC_VER) && _MSC_VER < 1300
-  str = "";
-#else
   str.clear();
-#endif
 
   str.reserve(bodyLen + 64);
 
@@ -623,11 +619,7 @@ FIX::FieldBase Message::extractField(
   }
 
   std::string::const_iterator const tagEnd = soh + 1;
-#if defined(__SUNPRO_CC)
-  std::distance(string.begin(), tagEnd, pos);
-#else
   pos = std::distance(string.begin(), tagEnd);
-#endif
 
   return FieldBase(field, valueStart, soh, tagStart, tagEnd);
 }

@@ -30,12 +30,10 @@
 #include "FieldNumbers.h"
 #include "FieldTypes.h"
 #include "Utility.h"
+#include <algorithm>
 #include <numeric>
 #include <sstream>
 #include <string_view>
-#if defined(__SUNPRO_CC)
-#include <algorithm>
-#endif
 
 namespace FIX {
 /**
@@ -194,13 +192,7 @@ private:
       checksum += (unsigned char)(*str);
     }
 
-#if defined(__SUNPRO_CC)
-    std::ptrdiff_t d;
-    std::distance(start, end, d);
-    return field_metrics(d, checksum);
-#else
     return field_metrics(static_cast<int>(std::distance(start, end)), checksum);
-#endif
   }
 
   static field_metrics calculateMetrics(const std::string &field) {
