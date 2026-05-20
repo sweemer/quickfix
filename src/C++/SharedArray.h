@@ -91,7 +91,7 @@ public:
 
   bool empty() const { return m_buffer == 0; }
 
-  operator T *() const { return &m_buffer[data_offset]; }
+  operator T *() const { return m_buffer ? &m_buffer[data_offset] : nullptr; }
 
   // optimized function to allocate storage for buffer and counter object at once
   static shared_array create(const std::size_t nSize) {

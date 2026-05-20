@@ -1,6 +1,6 @@
 #!/bin/sh
 
-trap "trap - TERM && kill -- -$$ 2 &&> /dev/null" INT TERM KILL EXIT
+trap "trap - TERM && kill -- -$$ 2>/dev/null" INT TERM KILL EXIT
 
 killall ut at
 
