@@ -7,6 +7,8 @@ on:
 jobs:
     build:
       runs-on: ${{ matrix.runner }}
+      env:
+          SANITIZER_FLAGS: -fsanitize=address,undefined -fno-sanitize-recover=all
       strategy:
           fail-fast: false
           matrix:
@@ -15,9 +17,9 @@ jobs:
               compiler-settings: ['']
               include:
                 - runner: ubuntu-latest
-                  compiler-settings: CXX=clang++ CC=clang
+                  compiler-settings: CXX=clang++ CC=clang CXXFLAGS="${SANITIZER_FLAGS}" CFLAGS="${SANITIZER_FLAGS}"
                 - runner: macos-latest
-                  compiler-settings: CXX=g++ CC=gcc
+                  compiler-settings: CXX=g++ CC=gcc CXXFLAGS="${SANITIZER_FLAGS}" CFLAGS="${SANITIZER_FLAGS}"
       steps:
       - name: Install dependencies
         uses: actions/setup-python@v5
@@ -41,7 +43,7 @@ jobs:
 
       - name: Configure ${{ matrix.compiler-settings }}
         shell: bash
-        run: ${{ matrix.compiler-settings }} ./configure CFLAGS="-fsanitize=address,undefined -fno-sanitize-recover=all" CXXFLAGS="-fsanitize=address,undefined -fno-sanitize-recover=all"
+        run: ${{ matrix.compiler-settings }} ./configure
         if: ${{ success() && matrix.compiler-settings != '' }}
 
       - name: Configure
