@@ -50,3 +50,77 @@ endif()
 if (HAVE_PYTHON3)
 add_subdirectory(python3)
 endif ()
+
+if (BUILD_TESTING AND QUICKFIX_TESTS)
+  set(quickfix_test_working_dir "${PROJECT_SOURCE_DIR}/test")
+  set(quickfix_spec_path "${PROJECT_SOURCE_DIR}/spec")
+
+  if (TARGET ut)
+    add_test(NAME ut
+             COMMAND $<TARGET_FILE:ut>
+                     --quickfix-config-file ${quickfix_test_working_dir}/cfg/ut.cfg
+                     --quickfix-spec-path ${quickfix_spec_path})
+    set_tests_properties(ut PROPERTIES
+                         WORKING_DIRECTORY "${quickfix_test_working_dir}")
+  endif()
+
+  if (TARGET at)
+    if (WIN32)
+      add_test(NAME at
+               COMMAND ${PROJECT_SOURCE_DIR}/test/runat.bat $<CONFIG> 6666)
+    else()
+      add_test(NAME at
+               COMMAND ${PROJECT_SOURCE_DIR}/test/runat.sh 6666)
+    endif()
+    set_tests_properties(at PROPERTIES
+                         WORKING_DIRECTORY "${quickfix_test_working_dir}")
+  endif()
+
+  if (TARGET pt)
+    set(pt_ctest_script "${CMAKE_CURRENT_BINARY_DIR}/RunPtCTest.cmake")
+    file(WRITE "${pt_ctest_script}" [=[
+if(NOT DEFINED PT_EXECUTABLE)
+  message(FATAL_ERROR "PT_EXECUTABLE is required")
+endif()
+
+if(NOT DEFINED SPEC_PATH)
+  message(FATAL_ERROR "SPEC_PATH is required")
+endif()
+
+if(NOT DEFINED TEST_WORKING_DIRECTORY)
+  message(FATAL_ERROR "TEST_WORKING_DIRECTORY is required")
+endif()
+
+if(NOT DEFINED NETWORK_PORT)
+  message(FATAL_ERROR "NETWORK_PORT is required")
+endif()
+
+execute_process(
+  COMMAND "${PT_EXECUTABLE}" "--quickfix-spec-path" "${SPEC_PATH}" "-#" "~[network]"
+  WORKING_DIRECTORY "${TEST_WORKING_DIRECTORY}"
+  RESULT_VARIABLE quickfix_pt_non_network_result)
+if(NOT quickfix_pt_non_network_result EQUAL 0)
+  message(FATAL_ERROR "pt non-network benchmark phase failed with exit code ${quickfix_pt_non_network_result}")
+endif()
+
+execute_process(
+  COMMAND "${PT_EXECUTABLE}" "--quickfix-spec-path" "${SPEC_PATH}" "-#" "[network]" "--port" "${NETWORK_PORT}"
+  WORKING_DIRECTORY "${TEST_WORKING_DIRECTORY}"
+  RESULT_VARIABLE quickfix_pt_network_result)
+if(NOT quickfix_pt_network_result EQUAL 0)
+  message(FATAL_ERROR "pt network benchmark phase failed with exit code ${quickfix_pt_network_result}")
+endif()
+]=])
+
+    add_test(NAME pt
+             COMMAND ${CMAKE_COMMAND}
+                     -DPT_EXECUTABLE=$<TARGET_FILE:pt>
+                     -DSPEC_PATH=${quickfix_spec_path}
+                     -DTEST_WORKING_DIRECTORY=${quickfix_test_working_dir}
+                     -DNETWORK_PORT=6668
+                     -P ${pt_ctest_script})
+    set_tests_properties(pt PROPERTIES
+                         WORKING_DIRECTORY "${quickfix_test_working_dir}"
+                         CONFIGURATIONS Release)
+  endif()
+endif()

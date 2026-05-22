@@ -15,6 +15,8 @@ message("-- Project name ${CMAKE_PROJECT_NAME}")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+include(CTest)
+
 if( MSVC )
   add_compile_options(/MP)
 endif()
