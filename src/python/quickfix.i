@@ -57,12 +57,91 @@
   *pDD = *(*$1);
 }
 
+%ignore FIX::UtcTimeStamp::UtcTimeStamp();
+%ignore FIX::UtcTimeStamp::now;
+%ignore FIX::UtcTimeStampField::getValue;
+%ignore FIX::MessageStore::getCreationTime;
+%ignore FIX::MemoryStore::getCreationTime;
+%ignore FIX::MessageStoreExceptionWrapper::getCreationTime;
+%ignore FIX::FileStore::getCreationTime;
+%ignore FIX::MySQLStore::getCreationTime;
+%ignore FIX::PostgreSQLStore::getCreationTime;
+%ignore FIX::NullStore::getCreationTime;
+%ignore FIX::FieldBase::setField;
+%ignore FIX::FieldBase::getField;
+
 %extend FIX::UtcTimeStamp {
+  UtcTimeStamp() {
+      return new FIX::UtcTimeStamp(FIX::DateTime::nowUtc());
+  }
+
+  static FIX::UtcTimeStamp *now() {
+      return new FIX::UtcTimeStamp(FIX::UtcTimeStamp::now());
+  }
+
   PyObject *getDateTime() {
       int y, m, d, h, mi, s, fs;
       $self->getYMD(y, m, d);
       $self->getHMS(h, mi, s, fs, 6);
       return PyDateTime_FromDateAndTime(y, m, d, h, mi, s, fs);
+  }
+}
+
+%extend FIX::UtcTimeStampField {
+  FIX::UtcTimeStamp *getValue() const {
+      return new FIX::UtcTimeStamp($self->getValue());
+  }
+}
+
+%extend FIX::MessageStore {
+  FIX::UtcTimeStamp *getCreationTime() const {
+      return new FIX::UtcTimeStamp($self->getCreationTime());
+  }
+}
+
+%extend FIX::MemoryStore {
+  FIX::UtcTimeStamp *getCreationTime() const {
+      return new FIX::UtcTimeStamp($self->getCreationTime());
+  }
+}
+
+%extend FIX::MessageStoreExceptionWrapper {
+  FIX::UtcTimeStamp *getCreationTime(bool &threw, FIX::IOException &e) {
+      return new FIX::UtcTimeStamp($self->getCreationTime(threw, e));
+  }
+}
+
+%extend FIX::FileStore {
+  FIX::UtcTimeStamp *getCreationTime() const {
+      return new FIX::UtcTimeStamp($self->getCreationTime());
+  }
+}
+
+%extend FIX::MySQLStore {
+  FIX::UtcTimeStamp *getCreationTime() const {
+      return new FIX::UtcTimeStamp($self->getCreationTime());
+  }
+}
+
+%extend FIX::PostgreSQLStore {
+  FIX::UtcTimeStamp *getCreationTime() const {
+      return new FIX::UtcTimeStamp($self->getCreationTime());
+  }
+}
+
+%extend FIX::NullStore {
+  FIX::UtcTimeStamp *getCreationTime() const {
+      return new FIX::UtcTimeStamp($self->getCreationTime());
+  }
+}
+
+%extend FIX::FieldBase {
+  void setField(int field) {
+      $self->setTag(field);
+  }
+
+  int getField() const {
+      return $self->getTag();
   }
 }
 
@@ -372,4 +451,3 @@ class SSLSocketAcceptor(SSLSocketAcceptorBase):
       sigaction( SIGINT, &new_action, &old_action );
 #endif
 %}
-
