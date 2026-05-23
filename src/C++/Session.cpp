@@ -372,8 +372,8 @@ void Session::nextResendRequest(const Message &resendRequest, const UtcTimeStamp
 
   Locker l(m_mutex);
 
-  auto beginSeqNo = resendRequest.getField<BeginSeqNo>();
-  auto endSeqNo = resendRequest.getField<EndSeqNo>();
+  SEQNUM beginSeqNo = resendRequest.getField<BeginSeqNo>();
+  SEQNUM endSeqNo = resendRequest.getField<EndSeqNo>();
 
   m_state.onEvent(
       "Received ResendRequest FROM: " + SEQNUM_CONVERTOR::convert(beginSeqNo)
@@ -393,7 +393,7 @@ void Session::nextResendRequest(const Message &resendRequest, const UtcTimeStamp
     }
     generateSequenceReset(beginSeqNo, endSeqNo);
   } else {
-    generateRetransmits(beginSeqNo.getValue(), endSeqNo.getValue());
+    generateRetransmits(beginSeqNo, endSeqNo);
   }
 
   MsgSeqNum msgSeqNum(0);
@@ -718,7 +718,7 @@ void Session::generateLogon(const Message &aLogon) {
   m_state.sentLogon(true);
 }
 
-void Session::generateResendRequest(const BeginString &beginString, const MsgSeqNum &msgSeqNum) {
+void Session::generateResendRequest(const std::string &beginString, SEQNUM msgSeqNum) {
   Message resendRequest = newMessage(MsgType(MsgType_ResendRequest));
 
   BeginSeqNo beginSeqNo((int)getExpectedTargetNum());
@@ -1114,7 +1114,7 @@ bool Session::doTargetTooLow(const Message &msg) {
 
   if (!possDupFlag) {
     std::stringstream stream;
-    stream << "MsgSeqNum too low, expecting " << getExpectedTargetNum() << " but received " << msgSeqNum;
+    stream << "MsgSeqNum too low, expecting " << getExpectedTargetNum() << " but received " << msgSeqNum.getValue();
     generateLogout(stream.str());
     throw std::logic_error(stream.str());
   }
