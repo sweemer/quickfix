@@ -612,62 +612,64 @@ public:
   /// conversion operators on the typed field classes.
   operator value_type() const { return getValue(); }
 
-  /// String comparisons against char* / std::string / std::string_view,
-  /// mirroring the free-function overloads provided for StringField.
-  /// Enabled only when T derives from StringField.
+  /// Backward-compatibility conversion to T so existing client code
+  /// like `const T& x = msg.getField<T>();` keeps compiling. Constructs
+  /// a temporary T, which copies the field string — the zero-copy paths
+  /// (`auto x`, `auto const& x`, `.getValue()`, and the value_type
+  /// conversion operator above) avoid this copy. Prefer those.
+  ///
+  /// This is also the path that reaches the free comparison operators
+  /// on StringField/UtcTimeStampField/etc., so `getField<MsgType>() == "A"`
+  /// continues to work via implicit T construction.
+  [[deprecated(
+      "Binding the result of getField<T>() to `const T&` constructs a temporary T and copies the field "
+      "string. Use `auto` or `auto const&` to keep the zero-copy FieldView<T>, or call .getValue() to read "
+      "the typed value directly.")]]
+  operator T() const {
+    return T(getValue());
+  }
+
+  /// Zero-copy string-equality overloads for StringField-derived T.
+  /// Take priority over the free `operator==(const StringField&, ...)` overloads
+  /// (which would otherwise be reached via the deprecated `operator T()` and
+  /// emit a copy + deprecation warning) because identity-on-LHS beats UDC-on-LHS.
   template <typename U = T, typename = std::enable_if_t<std::is_base_of_v<StringField, U>>>
-  bool operator==(std::string_view rhs) const {
+  bool operator==(const char *rhs) const {
     return m_field.getString() == rhs;
   }
   template <typename U = T, typename = std::enable_if_t<std::is_base_of_v<StringField, U>>>
-  bool operator!=(std::string_view rhs) const {
+  bool operator!=(const char *rhs) const {
     return m_field.getString() != rhs;
   }
   template <typename U = T, typename = std::enable_if_t<std::is_base_of_v<StringField, U>>>
-  bool operator<(std::string_view rhs) const {
-    return m_field.getString() < rhs;
+  bool operator==(const std::string &rhs) const {
+    return m_field.getString() == rhs;
   }
   template <typename U = T, typename = std::enable_if_t<std::is_base_of_v<StringField, U>>>
-  bool operator>(std::string_view rhs) const {
-    return m_field.getString() > rhs;
-  }
-  template <typename U = T, typename = std::enable_if_t<std::is_base_of_v<StringField, U>>>
-  bool operator<=(std::string_view rhs) const {
-    return m_field.getString() <= rhs;
-  }
-  template <typename U = T, typename = std::enable_if_t<std::is_base_of_v<StringField, U>>>
-  bool operator>=(std::string_view rhs) const {
-    return m_field.getString() >= rhs;
+  bool operator!=(const std::string &rhs) const {
+    return m_field.getString() != rhs;
   }
 
 private:
   const FieldBase &m_field;
 };
 
-/// Reversed-operand string comparisons for FieldView<T> where T derives from StringField.
+/// Reversed-operand zero-copy string-equality overloads.
 template <typename T, typename = std::enable_if_t<std::is_base_of_v<StringField, T>>>
-inline bool operator==(std::string_view lhs, const FieldView<T> &rhs) {
+inline bool operator==(const char *lhs, const FieldView<T> &rhs) {
   return lhs == rhs.getString();
 }
 template <typename T, typename = std::enable_if_t<std::is_base_of_v<StringField, T>>>
-inline bool operator!=(std::string_view lhs, const FieldView<T> &rhs) {
+inline bool operator!=(const char *lhs, const FieldView<T> &rhs) {
   return lhs != rhs.getString();
 }
 template <typename T, typename = std::enable_if_t<std::is_base_of_v<StringField, T>>>
-inline bool operator<(std::string_view lhs, const FieldView<T> &rhs) {
-  return lhs < rhs.getString();
+inline bool operator==(const std::string &lhs, const FieldView<T> &rhs) {
+  return lhs == rhs.getString();
 }
 template <typename T, typename = std::enable_if_t<std::is_base_of_v<StringField, T>>>
-inline bool operator>(std::string_view lhs, const FieldView<T> &rhs) {
-  return lhs > rhs.getString();
-}
-template <typename T, typename = std::enable_if_t<std::is_base_of_v<StringField, T>>>
-inline bool operator<=(std::string_view lhs, const FieldView<T> &rhs) {
-  return lhs <= rhs.getString();
-}
-template <typename T, typename = std::enable_if_t<std::is_base_of_v<StringField, T>>>
-inline bool operator>=(std::string_view lhs, const FieldView<T> &rhs) {
-  return lhs >= rhs.getString();
+inline bool operator!=(const std::string &lhs, const FieldView<T> &rhs) {
+  return lhs != rhs.getString();
 }
 
 } // namespace FIX
