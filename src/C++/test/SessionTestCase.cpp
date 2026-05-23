@@ -2397,7 +2397,9 @@ TEST_CASE_METHOD(acceptorT11Fixture, "AcceptorT11TestCase") {
     FIXT11::Logon logon = createT11Logon("ISLD", "TW", 1);
     logon.set(NextExpectedMsgSeqNum(1));
     object->next(logon, now);
-    CHECK(2 == sentLogon.getField<NextExpectedMsgSeqNum>());
+    NextExpectedMsgSeqNum nextExpectedMsgSeqNum;
+    sentLogon.getField(nextExpectedMsgSeqNum);
+    CHECK(2 == nextExpectedMsgSeqNum);
 
     object->next(createT11Heartbeat("ISLD", "TW", 2), now);
     FIX::Message heartbeat = createT11Heartbeat("TW", "ISLD", 2);
@@ -2412,8 +2414,11 @@ TEST_CASE_METHOD(acceptorT11Fixture, "AcceptorT11TestCase") {
     logon.set(NextExpectedMsgSeqNum(1));      // initiator pretends to miss SeqNum 2 and 3
     object->next(logon, now);
 
-    CHECK(6 == sentLogon.getField<NextExpectedMsgSeqNum>());
-    CHECK(3 == lastResent.getHeader().getField<MsgSeqNum>().getValue()); // retransmitted ExecutionReport
+    sentLogon.getField(nextExpectedMsgSeqNum);
+    CHECK(6 == nextExpectedMsgSeqNum);
+    MsgSeqNum msgSeqNum;
+    lastResent.getHeader().getField(msgSeqNum);
+    CHECK(3 == msgSeqNum.getValue()); // retransmitted ExecutionReport
     CHECK(2 == toSequenceReset);
 
     CHECK(0 == toResendRequest); // no resend request for SeqNum 5-9, initiator is expected to start message recovery
@@ -2437,7 +2442,9 @@ TEST_CASE_METHOD(initiatorT11Fixture, "InitiatorT11TestCase") {
     object->setResponder(this);
 
     object->next(now);
-    CHECK(1 == sentLogon.getField<NextExpectedMsgSeqNum>());
+    NextExpectedMsgSeqNum nextExpectedMsgSeqNum;
+    sentLogon.getField(nextExpectedMsgSeqNum);
+    CHECK(1 == nextExpectedMsgSeqNum);
 
     FIXT11::Logon logon = createT11Logon("ISLD", "TW", 1);
     logon.set(NextExpectedMsgSeqNum(2));
@@ -2453,12 +2460,15 @@ TEST_CASE_METHOD(initiatorT11Fixture, "InitiatorT11TestCase") {
     object->next(createT11Logout("ISLD", "TW", 4), now);
 
     object->next(now);
-    CHECK(5 == sentLogon.getField<NextExpectedMsgSeqNum>());
+    sentLogon.getField(nextExpectedMsgSeqNum);
+    CHECK(5 == nextExpectedMsgSeqNum);
     logon = createT11Logon("ISLD", "TW", 10); // acceptor pretends to have sent SeqNum 5-9 before
     logon.set(NextExpectedMsgSeqNum(2));      // acceptor pretends to miss SeqNum 2 and 3
     object->next(logon, now);
 
-    CHECK(3 == lastResent.getHeader().getField<MsgSeqNum>().getValue()); // retransmitted NewOrderSingle
+    MsgSeqNum msgSeqNum;
+    lastResent.getHeader().getField(msgSeqNum);
+    CHECK(3 == msgSeqNum.getValue()); // retransmitted NewOrderSingle
     CHECK(2 == toSequenceReset);
 
     CHECK(0 == toResendRequest); // no resend request for SeqNum 5-9, acceptor is expected to start message recovery
