@@ -142,7 +142,9 @@ public:
   }
 
   /// Get a field without type checking
-  template <typename T> const T &getField() const EXCEPT(FieldNotFound) {
+  template <typename T>
+  [[deprecated("This overload relies on undefined behavior. Use getField(FieldBase&), getFieldRef, or getField(int) instead.")]]
+  const T &getField() const EXCEPT(FieldNotFound) {
     return *reinterpret_cast<const T *>(&getFieldRef(T::tag));
   }
 
