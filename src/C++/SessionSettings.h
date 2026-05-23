@@ -246,23 +246,23 @@ public:
   SessionSettings(const std::string &file, bool resolveEnvVars = false) EXCEPT(ConfigError);
 
   /// Check if session setings are present
-  const bool has(const SessionID &) const;
+  [[nodiscard]] const bool has(const SessionID &) const;
 
   /// Get a dictionary for a session.
-  const Dictionary &get(const SessionID &) const EXCEPT(ConfigError);
+  [[nodiscard]] const Dictionary &get(const SessionID &) const EXCEPT(ConfigError);
   /// Set a dictionary for a session
   void set(const SessionID &, Dictionary) EXCEPT(ConfigError);
 
   /// Get global default settings
-  const Dictionary &get() const { return m_defaults; }
+  [[nodiscard]] const Dictionary &get() const { return m_defaults; }
   /// Set global default settings
   void set(const Dictionary &defaults) EXCEPT(ConfigError);
 
   /// Number of session settings
-  size_t size() const { return m_settings.size(); }
+  [[nodiscard]] size_t size() const { return m_settings.size(); }
 
   typedef std::map<SessionID, Dictionary> Dictionaries;
-  std::set<SessionID> getSessions() const;
+  [[nodiscard]] std::set<SessionID> getSessions() const;
 
 private:
   void validate(const Dictionary &) const EXCEPT(ConfigError);

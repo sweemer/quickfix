@@ -54,7 +54,7 @@ public:
 
   void replaceGroup(unsigned num, const FIX::Group &group) { FieldMap::replaceGroup(num, group.field(), group); }
 
-  Group &getGroup(unsigned num, FIX::Group &group) const EXCEPT(FieldNotFound) {
+  [[nodiscard]] Group &getGroup(unsigned num, FIX::Group &group) const EXCEPT(FieldNotFound) {
     group.clear();
     return static_cast<Group &>(FieldMap::getGroup(num, group.field(), group));
   }
@@ -62,8 +62,8 @@ public:
   void removeGroup(unsigned num, const FIX::Group &group) { FieldMap::removeGroup(num, group.field()); }
   void removeGroup(const FIX::Group &group) { FieldMap::removeGroup(group.field()); }
 
-  bool hasGroup(const FIX::Group &group) const { return FieldMap::hasGroup(group.field()); }
-  bool hasGroup(unsigned num, const FIX::Group &group) const { return FieldMap::hasGroup(num, group.field()); }
+  [[nodiscard]] bool hasGroup(const FIX::Group &group) const { return FieldMap::hasGroup(group.field()); }
+  [[nodiscard]] bool hasGroup(unsigned num, const FIX::Group &group) const { return FieldMap::hasGroup(num, group.field()); }
 };
 
 class Trailer : public FieldMap {
@@ -82,7 +82,7 @@ public:
 
   void replaceGroup(unsigned num, const FIX::Group &group) { FieldMap::replaceGroup(num, group.field(), group); }
 
-  Group &getGroup(unsigned num, FIX::Group &group) const EXCEPT(FieldNotFound) {
+  [[nodiscard]] Group &getGroup(unsigned num, FIX::Group &group) const EXCEPT(FieldNotFound) {
     group.clear();
     return static_cast<Group &>(FieldMap::getGroup(num, group.field(), group));
   }
@@ -90,8 +90,8 @@ public:
   void removeGroup(unsigned num, const FIX::Group &group) { FieldMap::removeGroup(num, group.field()); }
   void removeGroup(const FIX::Group &group) { FieldMap::removeGroup(group.field()); }
 
-  bool hasGroup(const FIX::Group &group) const { return FieldMap::hasGroup(group.field()); }
-  bool hasGroup(unsigned num, const FIX::Group &group) const { return FieldMap::hasGroup(num, group.field()); }
+  [[nodiscard]] bool hasGroup(const FIX::Group &group) const { return FieldMap::hasGroup(group.field()); }
+  [[nodiscard]] bool hasGroup(unsigned num, const FIX::Group &group) const { return FieldMap::hasGroup(num, group.field()); }
 };
 
 /**
@@ -164,7 +164,7 @@ public:
 
   void replaceGroup(unsigned num, const FIX::Group &group) { FieldMap::replaceGroup(num, group.field(), group); }
 
-  Group &getGroup(unsigned num, FIX::Group &group) const EXCEPT(FieldNotFound) {
+  [[nodiscard]] Group &getGroup(unsigned num, FIX::Group &group) const EXCEPT(FieldNotFound) {
     group.clear();
     return static_cast<Group &>(FieldMap::getGroup(num, group.field(), group));
   }
@@ -172,8 +172,8 @@ public:
   void removeGroup(unsigned num, const FIX::Group &group) { FieldMap::removeGroup(num, group.field()); }
   void removeGroup(const FIX::Group &group) { FieldMap::removeGroup(group.field()); }
 
-  bool hasGroup(const FIX::Group &group) const { return FieldMap::hasGroup(group.field()); }
-  bool hasGroup(unsigned num, const FIX::Group &group) const { return FieldMap::hasGroup(num, group.field()); }
+  [[nodiscard]] bool hasGroup(const FIX::Group &group) const { return FieldMap::hasGroup(group.field()); }
+  [[nodiscard]] bool hasGroup(unsigned num, const FIX::Group &group) const { return FieldMap::hasGroup(num, group.field()); }
 
 protected:
   // Constructor for derived classes
@@ -181,7 +181,7 @@ protected:
 
 public:
   /// Get a string representation of the message
-  std::string toString(
+  [[nodiscard]] std::string toString(
       int beginStringField = FIELD::BeginString,
       int bodyLengthField = FIELD::BodyLength,
       int checkSumField = FIELD::CheckSum) const;
@@ -192,7 +192,7 @@ public:
       int bodyLengthField = FIELD::BodyLength,
       int checkSumField = FIELD::CheckSum) const;
   /// Get a XML representation of the message
-  std::string toXML() const;
+  [[nodiscard]] std::string toXML() const;
   /// Get a XML representation without making a copy
   std::string &toXML(std::string &) const;
 
@@ -238,20 +238,20 @@ public:
   bool setStringHeader(const std::string &string);
 
   /// Getter for the message header
-  const Header &getHeader() const { return m_header; }
+  [[nodiscard]] const Header &getHeader() const { return m_header; }
   /// Mutable getter for the message header
-  Header &getHeader() { return m_header; }
+  [[nodiscard]] Header &getHeader() { return m_header; }
   /// Getter for the message trailer
-  const Trailer &getTrailer() const { return m_trailer; }
+  [[nodiscard]] const Trailer &getTrailer() const { return m_trailer; }
   /// Mutable getter for the message trailer
-  Trailer &getTrailer() { return m_trailer; }
+  [[nodiscard]] Trailer &getTrailer() { return m_trailer; }
 
-  bool hasValidStructure(int &tag) const {
+  [[nodiscard]] bool hasValidStructure(int &tag) const {
     tag = m_tag;
     return m_validStructure;
   }
 
-  int bodyLength(
+  [[nodiscard]] int bodyLength(
       int beginStringField = FIELD::BeginString,
       int bodyLengthField = FIELD::BodyLength,
       int checkSumField = FIELD::CheckSum) const {
@@ -260,13 +260,13 @@ public:
            + m_trailer.calculateLength(beginStringField, bodyLengthField, checkSumField);
   }
 
-  int checkSum(int checkSumField = FIELD::CheckSum) const {
+  [[nodiscard]] int checkSum(int checkSumField = FIELD::CheckSum) const {
     return (m_header.calculateTotal(checkSumField) + calculateTotal(checkSumField)
             + m_trailer.calculateTotal(checkSumField))
            % 256;
   }
 
-  bool isAdmin() const {
+  [[nodiscard]] bool isAdmin() const {
     MsgType msgType;
     if (m_header.getFieldIfSet(msgType)) {
       return isAdminMsgType(msgType);
@@ -274,7 +274,7 @@ public:
     return false;
   }
 
-  bool isApp() const {
+  [[nodiscard]] bool isApp() const {
     MsgType msgType;
     if (m_header.getFieldIfSet(msgType)) {
       return !isAdminMsgType(msgType);
@@ -282,7 +282,7 @@ public:
     return false;
   }
 
-  bool isEmpty() { return m_header.isEmpty() && FieldMap::isEmpty() && m_trailer.isEmpty(); }
+  [[nodiscard]] bool isEmpty() { return m_header.isEmpty() && FieldMap::isEmpty() && m_trailer.isEmpty(); }
 
   void clear() {
     m_tag = 0;
@@ -292,14 +292,14 @@ public:
     m_trailer.clear();
   }
 
-  static bool isAdminMsgType(const MsgType &msgType) {
+  [[nodiscard]] static bool isAdminMsgType(const MsgType &msgType) {
     if (msgType.getValue().length() != 1) {
       return false;
     }
     return strchr("0A12345", msgType.getValue().c_str()[0]) != 0;
   }
 
-  static ApplVerID toApplVerID(const BeginString &value) {
+  [[nodiscard]] static ApplVerID toApplVerID(const BeginString &value) {
     if (value == BeginString_FIX40) {
       return ApplVerID(ApplVerID_FIX40);
     }
@@ -327,7 +327,7 @@ public:
     return ApplVerID(ApplVerID(value));
   }
 
-  static BeginString toBeginString(const ApplVerID &applVerID) {
+  [[nodiscard]] static BeginString toBeginString(const ApplVerID &applVerID) {
     if (applVerID == ApplVerID_FIX40) {
       return BeginString(BeginString_FIX40);
     } else if (applVerID == ApplVerID_FIX41) {
@@ -349,16 +349,16 @@ public:
     }
   }
 
-  static bool isHeaderField(int field);
-  static bool isHeaderField(const FieldBase &field, const DataDictionary *pD = 0);
-  static bool isHeaderField(int field, const DataDictionary *pD);
+  [[nodiscard]] static bool isHeaderField(int field);
+  [[nodiscard]] static bool isHeaderField(const FieldBase &field, const DataDictionary *pD = 0);
+  [[nodiscard]] static bool isHeaderField(int field, const DataDictionary *pD);
 
-  static bool isTrailerField(int field);
-  static bool isTrailerField(const FieldBase &field, const DataDictionary *pD = 0);
-  static bool isTrailerField(int field, const DataDictionary *pD);
+  [[nodiscard]] static bool isTrailerField(int field);
+  [[nodiscard]] static bool isTrailerField(const FieldBase &field, const DataDictionary *pD = 0);
+  [[nodiscard]] static bool isTrailerField(int field, const DataDictionary *pD);
 
   /// Returns the session ID of the intended recipient
-  SessionID getSessionID(const std::string &qualifier = "") const EXCEPT(FieldNotFound);
+  [[nodiscard]] SessionID getSessionID(const std::string &qualifier = "") const EXCEPT(FieldNotFound);
   /// Sets the session ID of the intended recipient
   void setSessionID(const SessionID &sessionID);
 
@@ -398,7 +398,7 @@ inline std::ostream &operator<<(std::ostream &stream, const Message &message) {
 }
 
 /// Parse the type of a message from a string.
-inline MsgType identifyType(const std::string &message) EXCEPT(MessageParseError) {
+[[nodiscard]] inline MsgType identifyType(const std::string &message) EXCEPT(MessageParseError) {
   std::string::size_type pos = message.find(
       "\001"
       "35=");

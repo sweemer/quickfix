@@ -45,20 +45,20 @@ public:
   typedef Data::value_type value_type;
 
   /// Get the name of the dictionary.
-  std::string getName() const { return m_name; }
+  [[nodiscard]] std::string getName() const { return m_name; }
   /// Return the number of key/value pairs.
-  size_t size() const { return m_data.size(); }
+  [[nodiscard]] size_t size() const { return m_data.size(); }
 
   /// Get a value as a string.
-  std::string getString(const std::string &, bool capitalize = false) const EXCEPT(ConfigError, FieldConvertError);
+  [[nodiscard]] std::string getString(const std::string &, bool capitalize = false) const EXCEPT(ConfigError, FieldConvertError);
   /// Get a value as a int.
-  int getInt(const std::string &) const EXCEPT(ConfigError, FieldConvertError);
+  [[nodiscard]] int getInt(const std::string &) const EXCEPT(ConfigError, FieldConvertError);
   /// Get a value as a double.
-  double getDouble(const std::string &) const EXCEPT(ConfigError, FieldConvertError);
+  [[nodiscard]] double getDouble(const std::string &) const EXCEPT(ConfigError, FieldConvertError);
   /// Get a value as a bool
-  bool getBool(const std::string &) const EXCEPT(ConfigError, FieldConvertError);
+  [[nodiscard]] bool getBool(const std::string &) const EXCEPT(ConfigError, FieldConvertError);
   /// Get a value as a day of week
-  int getDay(const std::string &) const EXCEPT(ConfigError, FieldConvertError);
+  [[nodiscard]] int getDay(const std::string &) const EXCEPT(ConfigError, FieldConvertError);
 
   /// Set a value from a string.
   void setString(const std::string &, const std::string &);
@@ -72,7 +72,7 @@ public:
   void setDay(const std::string &, int);
 
   /// Check if the dictionary contains a value for key.
-  bool has(const std::string &) const;
+  [[nodiscard]] bool has(const std::string &) const;
   /// Merge two dictionaries.
   void merge(const Dictionary &);
 

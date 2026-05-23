@@ -168,7 +168,7 @@ template <typename T> T clamp_of(const T &value, const T &lowerBound, const T &u
 
 /// Empty converter is a no-op.
 struct EmptyConvertor {
-  static const std::string &convert(const std::string &value) { return value; }
+  [[nodiscard]] static const std::string &convert(const std::string &value) { return value; }
 };
 
 typedef EmptyConvertor StringConvertor;
@@ -183,7 +183,7 @@ template <typename T> struct IntTConvertor {
   static const T VALUE_MAX = (std::numeric_limits<T>::max)();
   static const T OVERFLOW_MAX = VALUE_MAX / 10;
 
-  static std::string convert(T value) {
+  [[nodiscard]] static std::string convert(T value) {
     // buffer is big enough for significant digits and extra digit,
     // minus and null
     char buffer[std::numeric_limits<T>::digits10 + 2];
@@ -191,7 +191,7 @@ template <typename T> struct IntTConvertor {
     return std::string(start, buffer + sizeof(buffer) - start);
   }
 
-  static bool convert(std::string::const_iterator str, std::string::const_iterator end, T &result) {
+  [[nodiscard]] static bool convert(std::string::const_iterator str, std::string::const_iterator end, T &result) {
     bool isNegative = false;
     typename std::make_unsigned<T>::type x = 0, nx = 0;
 
@@ -243,9 +243,9 @@ template <typename T> struct IntTConvertor {
     return true;
   }
 
-  static bool convert(const std::string &value, T &result) { return convert(value.begin(), value.end(), result); }
+  [[nodiscard]] static bool convert(const std::string &value, T &result) { return convert(value.begin(), value.end(), result); }
 
-  static T convert(const std::string &value) EXCEPT(FieldConvertError) {
+  [[nodiscard]] static T convert(const std::string &value) EXCEPT(FieldConvertError) {
     T result = 0;
     if (!convert(value.begin(), value.end(), result)) {
       throw FieldConvertError(value);
@@ -266,7 +266,7 @@ typedef IntTConvertor<unsigned_int64> UInt64Convertor;
 
 /// Converts checksum to/from a string
 struct CheckSumConvertor {
-  static std::string convert(int value) EXCEPT(FieldConvertError) {
+  [[nodiscard]] static std::string convert(int value) EXCEPT(FieldConvertError) {
     if (value > 255 || value < 0) {
       throw FieldConvertError();
     }
@@ -275,9 +275,9 @@ struct CheckSumConvertor {
     return std::string(result, sizeof(result));
   }
 
-  static bool convert(const std::string &value, int &result) { return IntConvertor::convert(value, result); }
+  [[nodiscard]] static bool convert(const std::string &value, int &result) { return IntConvertor::convert(value, result); }
 
-  static int convert(const std::string &value) EXCEPT(FieldConvertError) { return IntConvertor::convert(value); }
+  [[nodiscard]] static int convert(const std::string &value) EXCEPT(FieldConvertError) { return IntConvertor::convert(value); }
 };
 
 /// Converts double to/from a string
@@ -294,7 +294,7 @@ public:
   static const int SIGNIFICANT_DIGITS = 15;
   static const int BUFFFER_SIZE = 32;
 
-  static std::string convert(double value, int padding = 0, int significant_digits = SIGNIFICANT_DIGITS) {
+  [[nodiscard]] static std::string convert(double value, int padding = 0, int significant_digits = SIGNIFICANT_DIGITS) {
     char result[BUFFFER_SIZE];
     char *end = 0;
 
@@ -351,7 +351,7 @@ public:
     return std::string(result, size);
   }
 
-  static bool convert(const std::string &value, double &result) {
+  [[nodiscard]] static bool convert(const std::string &value, double &result) {
     const char *i = value.c_str();
 
     // Catch null strings
@@ -388,7 +388,7 @@ public:
     return true;
   }
 
-  static double convert(const std::string &value) EXCEPT(FieldConvertError) {
+  [[nodiscard]] static double convert(const std::string &value) EXCEPT(FieldConvertError) {
     double result = 0.0;
     if (!convert(value, result)) {
       throw FieldConvertError(value);
@@ -400,14 +400,14 @@ public:
 
 /// Converts character to/from a string
 struct CharConvertor {
-  static std::string convert(char value) {
+  [[nodiscard]] static std::string convert(char value) {
     if (value == '\0') {
       return "";
     }
     return std::string(1, value);
   }
 
-  static bool convert(const std::string &value, char &result) {
+  [[nodiscard]] static bool convert(const std::string &value, char &result) {
     if (value.size() != 1) {
       return false;
     }
@@ -415,7 +415,7 @@ struct CharConvertor {
     return true;
   }
 
-  static char convert(const std::string &value) EXCEPT(FieldConvertError) {
+  [[nodiscard]] static char convert(const std::string &value) EXCEPT(FieldConvertError) {
     char result = '\0';
     if (!convert(value, result)) {
       throw FieldConvertError(value);
@@ -427,12 +427,12 @@ struct CharConvertor {
 
 /// Converts boolean to/from a string
 struct BoolConvertor {
-  static std::string convert(bool value) {
+  [[nodiscard]] static std::string convert(bool value) {
     const char ch = value ? 'Y' : 'N';
     return std::string(1, ch);
   }
 
-  static bool convert(const std::string &value, bool &result) {
+  [[nodiscard]] static bool convert(const std::string &value, bool &result) {
     if (value.size() != 1) {
       return false;
     }
@@ -450,7 +450,7 @@ struct BoolConvertor {
     return true;
   }
 
-  static bool convert(const std::string &value) EXCEPT(FieldConvertError) {
+  [[nodiscard]] static bool convert(const std::string &value) EXCEPT(FieldConvertError) {
     bool result = false;
     if (!convert(value, result)) {
       throw FieldConvertError(value);
@@ -462,7 +462,7 @@ struct BoolConvertor {
 
 /// Converts a UtcTimeStamp to/from a string
 struct UtcTimeStampConvertor {
-  static std::string convert(const UtcTimeStamp &value, int precision = 0) EXCEPT(FieldConvertError) {
+  [[nodiscard]] static std::string convert(const UtcTimeStamp &value, int precision = 0) EXCEPT(FieldConvertError) {
     char result[17 + 10]; // Maximum
     int year, month, day, hour, minute, second, fraction;
 
@@ -489,7 +489,7 @@ struct UtcTimeStampConvertor {
     return std::string(result, precision ? (17 + 1 + precision) : 17);
   }
 
-  static UtcTimeStamp convert(const std::string &value) EXCEPT(FieldConvertError) {
+  [[nodiscard]] static UtcTimeStamp convert(const std::string &value) EXCEPT(FieldConvertError) {
     size_t length = value.size();
     if (length < 17 || length > 27) {
       throw FieldConvertError(value);
@@ -599,7 +599,7 @@ struct UtcTimeStampConvertor {
 
 /// Converts a UtcTimeOnly to/from a string
 struct UtcTimeOnlyConvertor {
-  static std::string convert(const UtcTimeOnly &value, int precision = 0) EXCEPT(FieldConvertError) {
+  [[nodiscard]] static std::string convert(const UtcTimeOnly &value, int precision = 0) EXCEPT(FieldConvertError) {
     char result[8 + 10]; // Maximum
     int hour, minute, second, fraction;
 
@@ -621,7 +621,7 @@ struct UtcTimeOnlyConvertor {
     return std::string(result, precision ? (8 + 1 + precision) : 8);
   }
 
-  static UtcTimeOnly convert(const std::string &value) EXCEPT(FieldConvertError) {
+  [[nodiscard]] static UtcTimeOnly convert(const std::string &value) EXCEPT(FieldConvertError) {
     size_t length = value.size();
     if (length < 8 || length > 18) {
       throw FieldConvertError(value);
@@ -704,7 +704,7 @@ struct UtcTimeOnlyConvertor {
 
 /// Converts a UtcDate to/from a string
 struct UtcDateConvertor {
-  static std::string convert(const UtcDate &value) EXCEPT(FieldConvertError) {
+  [[nodiscard]] static std::string convert(const UtcDate &value) EXCEPT(FieldConvertError) {
     int year, month, day;
     value.getYMD(year, month, day);
 
@@ -717,7 +717,7 @@ struct UtcDateConvertor {
     return std::string(result, sizeof(result));
   }
 
-  static UtcDate convert(const std::string &value) EXCEPT(FieldConvertError) {
+  [[nodiscard]] static UtcDate convert(const std::string &value) EXCEPT(FieldConvertError) {
     if (value.size() != 8) {
       throw FieldConvertError(value);
     }

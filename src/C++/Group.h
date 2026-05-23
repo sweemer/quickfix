@@ -58,16 +58,16 @@ public:
         m_field(copy.m_field),
         m_delim(copy.m_delim) {}
 
-  int field() const { return m_field; }
-  int delim() const { return m_delim; }
+  [[nodiscard]] int field() const { return m_field; }
+  [[nodiscard]] int delim() const { return m_delim; }
 
   void addGroup(const Group &group);
   void replaceGroup(unsigned num, const Group &group);
-  Group &getGroup(unsigned num, Group &group) const EXCEPT(FieldNotFound);
+  [[nodiscard]] Group &getGroup(unsigned num, Group &group) const EXCEPT(FieldNotFound);
   void removeGroup(unsigned num, const Group &group);
   void removeGroup(const Group &group);
-  bool hasGroup(const Group &group);
-  bool hasGroup(unsigned num, const Group &group);
+  [[nodiscard]] bool hasGroup(const Group &group);
+  [[nodiscard]] bool hasGroup(unsigned num, const Group &group);
 
 private:
   int m_field;

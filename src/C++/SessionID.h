@@ -46,17 +46,17 @@ public:
     }
   }
 
-  const BeginString &getBeginString() const { return m_beginString; }
-  const SenderCompID &getSenderCompID() const { return m_senderCompID; }
-  const TargetCompID &getTargetCompID() const { return m_targetCompID; }
-  const std::string &getSessionQualifier() const { return m_sessionQualifier; }
-  const bool isFIXT() const { return m_isFIXT; }
+  [[nodiscard]] const BeginString &getBeginString() const { return m_beginString; }
+  [[nodiscard]] const SenderCompID &getSenderCompID() const { return m_senderCompID; }
+  [[nodiscard]] const TargetCompID &getTargetCompID() const { return m_targetCompID; }
+  [[nodiscard]] const std::string &getSessionQualifier() const { return m_sessionQualifier; }
+  [[nodiscard]] const bool isFIXT() const { return m_isFIXT; }
 
   /// Get a string representation of the SessionID
-  std::string toString() const { return m_frozenString; }
+  [[nodiscard]] std::string toString() const { return m_frozenString; }
 
   // Return a reference for a high-performance scenario
-  const std::string &toStringFrozen() const { return m_frozenString; }
+  [[nodiscard]] const std::string &toStringFrozen() const { return m_frozenString; }
 
   /// Build from string representation of SessionID
   void fromString(const std::string &str) {
@@ -96,7 +96,7 @@ public:
   friend std::ostream &operator<<(std::ostream &, const SessionID &);
   friend std::istream &operator>>(std::istream &, SessionID &);
 
-  SessionID operator~() const {
+  [[nodiscard]] SessionID operator~() const {
     return SessionID(m_beginString, SenderCompID(m_targetCompID), TargetCompID(m_senderCompID), m_sessionQualifier);
   }
 

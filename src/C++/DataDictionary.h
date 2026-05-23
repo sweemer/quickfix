@@ -111,17 +111,17 @@ public:
   void readFromDocument(const DOMDocumentPtr &pDoc) EXCEPT(ConfigError);
   void readFromStream(std::istream &stream) EXCEPT(ConfigError);
 
-  message_order const &getOrderedFields() const;
-  message_order const &getHeaderOrderedFields() const EXCEPT(ConfigError);
-  message_order const &getTrailerOrderedFields() const EXCEPT(ConfigError);
-  message_order const &getMessageOrderedFields(const std::string &msgType) const EXCEPT(ConfigError);
+  [[nodiscard]] message_order const &getOrderedFields() const;
+  [[nodiscard]] message_order const &getHeaderOrderedFields() const EXCEPT(ConfigError);
+  [[nodiscard]] message_order const &getTrailerOrderedFields() const EXCEPT(ConfigError);
+  [[nodiscard]] message_order const &getMessageOrderedFields(const std::string &msgType) const EXCEPT(ConfigError);
 
   // storage functions
   void setVersion(const std::string &beginString) {
     m_beginString = beginString;
     m_hasVersion = true;
   }
-  std::string getVersion() const { return m_beginString.getString(); }
+  [[nodiscard]] std::string getVersion() const { return m_beginString.getString(); }
 
   void addField(int field) {
     m_fields.insert(field);
@@ -135,7 +135,7 @@ public:
     m_fieldNames[field] = name;
   }
 
-  bool getFieldName(int field, std::string &name) const {
+  [[nodiscard]] bool getFieldName(int field, std::string &name) const {
     FieldToName::const_iterator i = m_fieldNames.find(field);
     if (i == m_fieldNames.end()) {
       return false;
@@ -144,7 +144,7 @@ public:
     return true;
   }
 
-  bool getFieldTag(const std::string &name, int &field) const {
+  [[nodiscard]] bool getFieldTag(const std::string &name, int &field) const {
     NameToField::const_iterator i = m_names.find(name);
     if (i == m_names.end()) {
       return false;
@@ -158,7 +158,7 @@ public:
     m_nameValues[std::make_pair(field, name)] = value;
   }
 
-  bool getValueName(int field, const std::string &value, std::string &name) const {
+  [[nodiscard]] bool getValueName(int field, const std::string &value, std::string &name) const {
     ValueToName::const_iterator i = m_valueNames.find(std::make_pair(field, value));
     if (i == m_valueNames.end()) {
       return false;
@@ -167,7 +167,7 @@ public:
     return true;
   }
 
-  bool getNameValue(int field, const std::string &name, std::string &value) const {
+  [[nodiscard]] bool getNameValue(int field, const std::string &name, std::string &value) const {
     ValueToName::const_iterator i = m_nameValues.find(std::make_pair(field, name));
     if (m_nameValues.end() == i) {
       return false;
@@ -176,11 +176,11 @@ public:
     return true;
   }
 
-  bool isField(int field) const { return m_fields.find(field) != m_fields.end(); }
+  [[nodiscard]] bool isField(int field) const { return m_fields.find(field) != m_fields.end(); }
 
   void addMsgType(const std::string &msgType) { m_messages.insert(msgType); }
 
-  bool isMsgType(const std::string &msgType) const { return m_messages.find(msgType) != m_messages.end(); }
+  [[nodiscard]] bool isMsgType(const std::string &msgType) const { return m_messages.find(msgType) != m_messages.end(); }
 
   void addMsgField(const std::string &msgType, int field) {
     if (m_storeMsgFieldsOrder) {
@@ -190,7 +190,7 @@ public:
     m_messageFields[msgType].insert(field);
   }
 
-  bool isMsgField(const std::string &msgType, int field) const {
+  [[nodiscard]] bool isMsgField(const std::string &msgType, int field) const {
     MsgTypeToField::const_iterator i = m_messageFields.find(msgType);
     if (i == m_messageFields.end()) {
       return false;
@@ -206,7 +206,7 @@ public:
     m_headerFields[field] = required;
   }
 
-  bool isHeaderField(int field) const { return m_headerFields.find(field) != m_headerFields.end(); }
+  [[nodiscard]] bool isHeaderField(int field) const { return m_headerFields.find(field) != m_headerFields.end(); }
 
   void addTrailerField(int field, bool required) {
     if (m_storeMsgFieldsOrder) {
@@ -216,7 +216,7 @@ public:
     m_trailerFields[field] = required;
   }
 
-  bool isTrailerField(int field) const { return m_trailerFields.find(field) != m_trailerFields.end(); }
+  [[nodiscard]] bool isTrailerField(int field) const { return m_trailerFields.find(field) != m_trailerFields.end(); }
 
   void addFieldType(int field, FIX::TYPE::Type type) {
     m_fieldTypes[field] = type;
@@ -226,7 +226,7 @@ public:
     }
   }
 
-  bool getFieldType(int field, FIX::TYPE::Type &type) const {
+  [[nodiscard]] bool getFieldType(int field, FIX::TYPE::Type &type) const {
     FieldTypes::const_iterator i = m_fieldTypes.find(field);
     if (i == m_fieldTypes.end()) {
       return false;
@@ -237,7 +237,7 @@ public:
 
   void addRequiredField(const std::string &msgType, int field) { m_requiredFields[msgType].insert(field); }
 
-  bool isRequiredField(const std::string &msgType, int field) const {
+  [[nodiscard]] bool isRequiredField(const std::string &msgType, int field) const {
     MsgTypeToField::const_iterator i = m_requiredFields.find(msgType);
     if (i == m_requiredFields.end()) {
       return false;
@@ -247,12 +247,12 @@ public:
 
   void addFieldValue(int field, const std::string &value) { m_fieldValues[field].insert(value); }
 
-  bool hasFieldValue(int field) const {
+  [[nodiscard]] bool hasFieldValue(int field) const {
     FieldToValue::const_iterator i = m_fieldValues.find(field);
     return i != m_fieldValues.end();
   }
 
-  bool isFieldValue(int field, const std::string &value) const {
+  [[nodiscard]] bool isFieldValue(int field, const std::string &value) const {
     FieldToValue::const_iterator i = m_fieldValues.find(field);
     if (i == m_fieldValues.end()) {
       return false;
@@ -283,7 +283,7 @@ public:
     presenceMap[msg] = std::make_pair(delim, pDD);
   }
 
-  bool isGroup(const std::string &msg, int field) const {
+  [[nodiscard]] bool isGroup(const std::string &msg, int field) const {
     FieldToGroup::const_iterator i = m_groups.find(field);
     if (i == m_groups.end()) {
       return false;
@@ -295,7 +295,7 @@ public:
     return (iter != presenceMap.end());
   }
 
-  bool getGroup(const std::string &msg, int field, int &delim, const DataDictionary *&pDataDictionary) const {
+  [[nodiscard]] bool getGroup(const std::string &msg, int field, int &delim, const DataDictionary *&pDataDictionary) const {
     FieldToGroup::const_iterator i = m_groups.find(field);
     if (i == m_groups.end()) {
       return false;
@@ -314,12 +314,12 @@ public:
     return true;
   }
 
-  bool isDataField(int field) const {
+  [[nodiscard]] bool isDataField(int field) const {
     MsgFields::const_iterator iter = m_dataFields.find(field);
     return iter != m_dataFields.end();
   }
 
-  bool isMultipleValueField(int field) const {
+  [[nodiscard]] bool isMultipleValueField(int field) const {
     FieldTypes::const_iterator i = m_fieldTypes.find(field);
     return i != m_fieldTypes.end()
            && (i->second == TYPE::MultipleValueString || i->second == TYPE::MultipleCharValue
@@ -331,7 +331,7 @@ public:
   void checkUserDefinedFields(bool value) { m_checkUserDefinedFields = value; }
   void allowUnknownMsgFields(bool value) { m_allowUnknownMessageFields = value; }
   void preserveMessageFieldsOrder(bool value) { m_storeMsgFieldsOrder = value; }
-  bool isMessageFieldsOrderPreserved() const { return m_storeMsgFieldsOrder; }
+  [[nodiscard]] bool isMessageFieldsOrderPreserved() const { return m_storeMsgFieldsOrder; }
 
   /// Validate a message.
   static void validate(

@@ -142,20 +142,20 @@ public:
   }
 
   /// Get a field without type checking
-  template <typename T> const T &getField() const EXCEPT(FieldNotFound) {
+  template <typename T> [[nodiscard]] const T &getField() const EXCEPT(FieldNotFound) {
     return *reinterpret_cast<const T *>(&getFieldRef(T::tag));
   }
 
-  template <typename F> std::optional<F> getFieldOptional() const {
+  template <typename F> [[nodiscard]] std::optional<F> getFieldOptional() const {
     F field;
     return getFieldIfSet(field) ? std::optional<F>{field} : std::nullopt;
   }
 
   /// Get a field without a field class
-  const std::string &getField(int tag) const EXCEPT(FieldNotFound) { return getFieldRef(tag).getString(); }
+  [[nodiscard]] const std::string &getField(int tag) const EXCEPT(FieldNotFound) { return getFieldRef(tag).getString(); }
 
   /// Get direct access to a field through a reference
-  const FieldBase &getFieldRef(int tag) const EXCEPT(FieldNotFound) {
+  [[nodiscard]] const FieldBase &getFieldRef(int tag) const EXCEPT(FieldNotFound) {
     Fields::const_iterator field = findTag(tag);
     if (field == m_fields.end()) {
       throw FieldNotFound(tag);
@@ -164,12 +164,12 @@ public:
   }
 
   /// Get direct access to a field through a pointer
-  const FieldBase *const getFieldPtr(int tag) const EXCEPT(FieldNotFound) { return &getFieldRef(tag); }
+  [[nodiscard]] const FieldBase *const getFieldPtr(int tag) const EXCEPT(FieldNotFound) { return &getFieldRef(tag); }
 
   /// Check to see if a field is set
-  bool isSetField(const FieldBase &field) const { return isSetField(field.getTag()); }
+  [[nodiscard]] bool isSetField(const FieldBase &field) const { return isSetField(field.getTag()); }
   /// Check to see if a field is set by referencing its number
-  bool isSetField(int tag) const { return findTag(tag) != m_fields.end(); }
+  [[nodiscard]] bool isSetField(int tag) const { return findTag(tag) != m_fields.end(); }
 
   /// Remove a field. If field is not present, this is a no-op.
   void removeField(int tag);
@@ -184,12 +184,12 @@ public:
   void replaceGroup(int num, int tag, const FieldMap &group);
 
   /// Get a specific instance of a group.
-  FieldMap &getGroup(int num, int tag, FieldMap &group) const EXCEPT(FieldNotFound) {
+  [[nodiscard]] FieldMap &getGroup(int num, int tag, FieldMap &group) const EXCEPT(FieldNotFound) {
     return group = getGroupRef(num, tag);
   }
 
   /// Get direct access to a field through a reference
-  FieldMap &getGroupRef(int num, int tag) const EXCEPT(FieldNotFound) {
+  [[nodiscard]] FieldMap &getGroupRef(int num, int tag) const EXCEPT(FieldNotFound) {
     Groups::const_iterator tagWithGroups = m_groups.find(tag);
     if (tagWithGroups == m_groups.end()) {
       throw FieldNotFound(tag);
@@ -204,9 +204,9 @@ public:
   }
 
   /// Get direct access to a field through a pointer
-  FieldMap *getGroupPtr(int num, int tag) const EXCEPT(FieldNotFound) { return &getGroupRef(num, tag); }
+  [[nodiscard]] FieldMap *getGroupPtr(int num, int tag) const EXCEPT(FieldNotFound) { return &getGroupRef(num, tag); }
 
-  const Groups &groups() const { return m_groups; }
+  [[nodiscard]] const Groups &groups() const { return m_groups; }
 
   /// Remove a specific instance of a group.
   void removeGroup(int num, int tag);
@@ -214,33 +214,33 @@ public:
   void removeGroup(int tag);
 
   /// Check to see any instance of a group exists
-  bool hasGroup(int tag) const;
+  [[nodiscard]] bool hasGroup(int tag) const;
   /// Check to see if a specific instance of a group exists
-  bool hasGroup(int num, int tag) const;
+  [[nodiscard]] bool hasGroup(int num, int tag) const;
   /// Count the number of instance of a group
-  size_t groupCount(int tag) const;
+  [[nodiscard]] size_t groupCount(int tag) const;
 
   /// Clear all fields from the map
   void clear();
   /// Check if map contains any fields
-  bool isEmpty();
+  [[nodiscard]] bool isEmpty();
 
-  size_t totalFields() const;
+  [[nodiscard]] size_t totalFields() const;
 
   std::string &calculateString(std::string &) const;
 
-  int calculateLength(
+  [[nodiscard]] int calculateLength(
       int beginStringField = FIELD::BeginString,
       int bodyLengthField = FIELD::BodyLength,
       int checkSumField = FIELD::CheckSum) const;
 
-  int calculateTotal(int checkSumField = FIELD::CheckSum) const;
+  [[nodiscard]] int calculateTotal(int checkSumField = FIELD::CheckSum) const;
 
   struct LengthAndTotal {
     int length;
     int total;
   };
-  LengthAndTotal calculateLengthAndTotal(
+  [[nodiscard]] LengthAndTotal calculateLengthAndTotal(
       int beginStringField = FIELD::BeginString,
       int bodyLengthField = FIELD::BodyLength,
       int checkSumField = FIELD::CheckSum) const;
