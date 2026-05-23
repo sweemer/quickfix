@@ -47,7 +47,7 @@ public:
 
     auto const &clOrdID = message.getField<FIX::ClOrdID>();
 
-    std::pair<FIX::ClOrdID, FIX::SessionID> pair = std::make_pair(clOrdID, sessionID);
+    std::pair<FIX::ClOrdID, FIX::SessionID> pair = std::make_pair(FIX::ClOrdID(clOrdID), sessionID);
 
     if (possResend == true) {
       if (m_orderIDs.find(pair) != m_orderIDs.end()) {

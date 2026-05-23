@@ -518,6 +518,158 @@ typedef DoubleField PercentageField;
 typedef StringField CountryField;
 typedef StringField TzTimeOnlyField;
 typedef StringField TzTimeStampField;
+
+/**
+ * Zero-copy, type-safe view of a stored FieldBase as a typed field T.
+ *
+ * FieldMap stores fields as plain FieldBase (sliced); a previous version of
+ * FieldMap::getField<T>() reinterpret_cast<>ed a FieldBase* to T*, which is
+ * undefined behaviour. FieldView holds a reference to the actual stored
+ * FieldBase and exposes the same value-access interface as T's parent typed
+ * field class, without ever pretending the underlying object is a T.
+ */
+template <typename T> class FieldView {
+  // Map T to the value type returned by its parent typed field's getValue().
+  // The branches mirror the typed field classes defined above.
+  using value_type = std::conditional_t<
+      std::is_base_of_v<StringField, T>,
+      const std::string &,
+      std::conditional_t<
+          std::is_base_of_v<CharField, T>,
+          char,
+          std::conditional_t<
+              std::is_base_of_v<DoubleField, T>,
+              double,
+              std::conditional_t<
+                  std::is_base_of_v<Int64Field, T>,
+                  int64_t,
+                  std::conditional_t<
+                      std::is_base_of_v<UInt64Field, T>,
+                      uint64_t,
+                      std::conditional_t<
+                          std::is_base_of_v<IntField, T>,
+                          int,
+                          std::conditional_t<
+                              std::is_base_of_v<BoolField, T>,
+                              bool,
+                              std::conditional_t<
+                                  std::is_base_of_v<UtcTimeStampField, T>,
+                                  UtcTimeStamp,
+                                  std::conditional_t<
+                                      std::is_base_of_v<UtcDateField, T>,
+                                      UtcDate,
+                                      std::conditional_t<
+                                          std::is_base_of_v<UtcTimeOnlyField, T>,
+                                          UtcTimeOnly,
+                                          std::conditional_t<std::is_base_of_v<CheckSumField, T>, int, void>>>>>>>>>>>;
+
+  static_assert(!std::is_same_v<value_type, void>, "FieldView<T>: T must derive from a typed field defined in Field.h");
+
+public:
+  explicit FieldView(const FieldBase &field)
+      : m_field(field) {}
+
+  int getTag() const { return m_field.getTag(); }
+  const std::string &getString() const { return m_field.getString(); }
+
+  /// Allows passing the view anywhere a const FieldBase& is expected
+  /// (e.g. setField, operator<<).
+  operator const FieldBase &() const { return m_field; }
+
+  value_type getValue() const EXCEPT(IncorrectDataFormat) {
+    if constexpr (std::is_base_of_v<StringField, T>) {
+      return m_field.getString();
+    } else {
+      try {
+        if constexpr (std::is_base_of_v<CharField, T>) {
+          return CharConvertor::convert(m_field.getString());
+        } else if constexpr (std::is_base_of_v<DoubleField, T>) {
+          return DoubleConvertor::convert(m_field.getString());
+        } else if constexpr (std::is_base_of_v<Int64Field, T>) {
+          return Int64Convertor::convert(m_field.getString());
+        } else if constexpr (std::is_base_of_v<UInt64Field, T>) {
+          return UInt64Convertor::convert(m_field.getString());
+        } else if constexpr (std::is_base_of_v<IntField, T>) {
+          return IntConvertor::convert(m_field.getString());
+        } else if constexpr (std::is_base_of_v<BoolField, T>) {
+          return BoolConvertor::convert(m_field.getString());
+        } else if constexpr (std::is_base_of_v<UtcTimeStampField, T>) {
+          return UtcTimeStampConvertor::convert(m_field.getString());
+        } else if constexpr (std::is_base_of_v<UtcDateField, T>) {
+          return UtcDateConvertor::convert(m_field.getString());
+        } else if constexpr (std::is_base_of_v<UtcTimeOnlyField, T>) {
+          return UtcTimeOnlyConvertor::convert(m_field.getString());
+        } else if constexpr (std::is_base_of_v<CheckSumField, T>) {
+          return CheckSumConvertor::convert(m_field.getString());
+        }
+      } catch (FieldConvertError &) {
+        throw IncorrectDataFormat(m_field.getTag(), m_field.getString());
+      }
+    }
+  }
+
+  /// Implicit conversion to the underlying value type, mirroring the
+  /// conversion operators on the typed field classes.
+  operator value_type() const { return getValue(); }
+
+  /// String comparisons against char* / std::string / std::string_view,
+  /// mirroring the free-function overloads provided for StringField.
+  /// Enabled only when T derives from StringField.
+  template <typename U = T, typename = std::enable_if_t<std::is_base_of_v<StringField, U>>>
+  bool operator==(std::string_view rhs) const {
+    return m_field.getString() == rhs;
+  }
+  template <typename U = T, typename = std::enable_if_t<std::is_base_of_v<StringField, U>>>
+  bool operator!=(std::string_view rhs) const {
+    return m_field.getString() != rhs;
+  }
+  template <typename U = T, typename = std::enable_if_t<std::is_base_of_v<StringField, U>>>
+  bool operator<(std::string_view rhs) const {
+    return m_field.getString() < rhs;
+  }
+  template <typename U = T, typename = std::enable_if_t<std::is_base_of_v<StringField, U>>>
+  bool operator>(std::string_view rhs) const {
+    return m_field.getString() > rhs;
+  }
+  template <typename U = T, typename = std::enable_if_t<std::is_base_of_v<StringField, U>>>
+  bool operator<=(std::string_view rhs) const {
+    return m_field.getString() <= rhs;
+  }
+  template <typename U = T, typename = std::enable_if_t<std::is_base_of_v<StringField, U>>>
+  bool operator>=(std::string_view rhs) const {
+    return m_field.getString() >= rhs;
+  }
+
+private:
+  const FieldBase &m_field;
+};
+
+/// Reversed-operand string comparisons for FieldView<T> where T derives from StringField.
+template <typename T, typename = std::enable_if_t<std::is_base_of_v<StringField, T>>>
+inline bool operator==(std::string_view lhs, const FieldView<T> &rhs) {
+  return lhs == rhs.getString();
+}
+template <typename T, typename = std::enable_if_t<std::is_base_of_v<StringField, T>>>
+inline bool operator!=(std::string_view lhs, const FieldView<T> &rhs) {
+  return lhs != rhs.getString();
+}
+template <typename T, typename = std::enable_if_t<std::is_base_of_v<StringField, T>>>
+inline bool operator<(std::string_view lhs, const FieldView<T> &rhs) {
+  return lhs < rhs.getString();
+}
+template <typename T, typename = std::enable_if_t<std::is_base_of_v<StringField, T>>>
+inline bool operator>(std::string_view lhs, const FieldView<T> &rhs) {
+  return lhs > rhs.getString();
+}
+template <typename T, typename = std::enable_if_t<std::is_base_of_v<StringField, T>>>
+inline bool operator<=(std::string_view lhs, const FieldView<T> &rhs) {
+  return lhs <= rhs.getString();
+}
+template <typename T, typename = std::enable_if_t<std::is_base_of_v<StringField, T>>>
+inline bool operator>=(std::string_view lhs, const FieldView<T> &rhs) {
+  return lhs >= rhs.getString();
+}
+
 } // namespace FIX
 
 #define DEFINE_FIELD_CLASS_NUM(NAME, TOK, TYPE, NUM)                                                                   \

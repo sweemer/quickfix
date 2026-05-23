@@ -252,8 +252,8 @@ private:
     UtcTimeStamp creationTime = m_state.getCreationTime();
     return m_sessionTime.isInSameRange(now, creationTime);
   }
-  bool isTargetTooHigh(const MsgSeqNum &msgSeqNum) { return msgSeqNum > (m_state.getNextTargetMsgSeqNum()); }
-  bool isTargetTooLow(const MsgSeqNum &msgSeqNum) { return msgSeqNum < (m_state.getNextTargetMsgSeqNum()); }
+  bool isTargetTooHigh(SEQNUM msgSeqNum) { return msgSeqNum > (m_state.getNextTargetMsgSeqNum()); }
+  bool isTargetTooLow(SEQNUM msgSeqNum) { return msgSeqNum < (m_state.getNextTargetMsgSeqNum()); }
   bool isCorrectCompID(const SenderCompID &senderCompID, const TargetCompID &targetCompID) {
     if (!m_checkCompId) {
       return true;
@@ -285,7 +285,7 @@ private:
 
   void generateLogon();
   void generateLogon(const Message &);
-  void generateResendRequest(const BeginString &, const MsgSeqNum &);
+  void generateResendRequest(const std::string &beginString, SEQNUM msgSeqNum);
   void generateSequenceReset(SEQNUM, SEQNUM);
   void generateRetransmits(SEQNUM beginSeqNo, SEQNUM endSeqNo);
   void generateHeartbeat();
