@@ -135,9 +135,9 @@ namespace FIX {
 /// Threaded Socket implementation of Initiator.
 class ThreadedSSLSocketInitiator : public Initiator {
 public:
-  ThreadedSSLSocketInitiator(Application &, MessageStoreFactory &, const SessionSettings &) EXCEPT(ConfigError);
+  ThreadedSSLSocketInitiator(Application &, MessageStoreFactory &, const SessionSettings &);
   ThreadedSSLSocketInitiator(Application &, MessageStoreFactory &, const SessionSettings &, LogFactory &)
-      EXCEPT(ConfigError);
+     ;
 
   virtual ~ThreadedSSLSocketInitiator();
 
@@ -157,8 +157,8 @@ private:
   typedef std::map<SocketKey, thread_id> SocketToThread;
   typedef std::pair<ThreadedSSLSocketInitiator *, ThreadedSSLSocketConnection *> ThreadPair;
 
-  void onConfigure(const SessionSettings &) EXCEPT(ConfigError);
-  void onInitialize(const SessionSettings &) EXCEPT(RuntimeError);
+  void onConfigure(const SessionSettings &);
+  void onInitialize(const SessionSettings &);
 
   void onStart();
   bool onPoll();
