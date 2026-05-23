@@ -514,9 +514,9 @@ bool Message::isTrailerField(int field, const DataDictionary *pD) {
 
 SessionID Message::getSessionID(const std::string &qualifier) const EXCEPT(FieldNotFound) {
   return SessionID(
-      getHeader().getField<BeginString>(),
-      getHeader().getField<SenderCompID>(),
-      getHeader().getField<TargetCompID>(),
+      getHeader().getField(FIELD::BeginString),
+      getHeader().getField(FIELD::SenderCompID),
+      getHeader().getField(FIELD::TargetCompID),
       qualifier);
 }
 
