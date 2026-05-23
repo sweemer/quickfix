@@ -78,7 +78,7 @@ SocketServer::SocketServer(int timeout)
     : m_monitor(timeout) {}
 
 socket_handle SocketServer::add(int port, bool reuse, bool noDelay, int sendBufSize, int rcvBufSize)
-    EXCEPT(SocketException &) {
+    {
   if (m_portToInfo.find(port) != m_portToInfo.end()) {
     return m_portToInfo[port].m_socket;
   }

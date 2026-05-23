@@ -130,16 +130,16 @@ class Application : public FIX::Application {
     }
   }
 
-  void onLogon(const FIX::SessionID &sessionID) EXCEPT(FIX::RejectLogon) {}
+  void onLogon(const FIX::SessionID &sessionID) {}
 
   void onLogout(const FIX::SessionID &sessionID) { m_cracker.reset(sessionID); }
 
   void toAdmin(FIX::Message &message, const FIX::SessionID &) {}
 
-  void toApp(FIX::Message &message, const FIX::SessionID &) EXCEPT(FIX::DoNotSend) {}
+  void toApp(FIX::Message &message, const FIX::SessionID &) {}
 
   void fromAdmin(const FIX::Message &message, const FIX::SessionID &sessionID)
-      EXCEPT(FIX::FieldNotFound, FIX::IncorrectDataFormat, FIX::IncorrectTagValue, FIX::RejectLogon) {
+      {
     auto const &msgType = message.getHeader().getField<FIX::MsgType>();
     if (msgType == FIX::MsgType_Logon) {
       if (message.isSetField(FIX::FIELD::DefaultApplVerID)) {
@@ -150,7 +150,7 @@ class Application : public FIX::Application {
   }
 
   void fromApp(const FIX::Message &message, const FIX::SessionID &sessionID)
-      EXCEPT(FIX::FieldNotFound, FIX::IncorrectDataFormat, FIX::IncorrectTagValue, FIX::UnsupportedMessageType) {
+      {
     auto const &msgType = message.getHeader().getField<FIX::MsgType>();
     if (msgType == FIX::MsgType_Email) {
       FIX::Message echo = message;
