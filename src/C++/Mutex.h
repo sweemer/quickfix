@@ -23,6 +23,9 @@
 #define FIX_MUTEX_H
 
 #include "Utility.h"
+#ifndef _MSC_VER
+#include <pthread.h>
+#endif
 
 namespace FIX {
 /// Portable implementation of a mutex.
