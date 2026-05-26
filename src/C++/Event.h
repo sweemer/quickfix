@@ -22,67 +22,27 @@
 #ifndef FIX_EVENT_H
 #define FIX_EVENT_H
 
-#include "Utility.h"
-#include <math.h>
-
-#ifndef _MSC_VER
-#include <cmath>
-#include <pthread.h>
-#endif
+#include <chrono>
+#include <condition_variable>
+#include <mutex>
 
 namespace FIX {
 /// Portable implementation of an event/conditional mutex
 class Event {
 public:
-  Event() {
-#ifdef _MSC_VER
-    m_event = CreateEvent(0, false, false, 0);
-#else
-    pthread_mutex_init(&m_mutex, 0);
-    pthread_cond_init(&m_event, 0);
-#endif
-  }
-
-  ~Event() {
-#ifdef _MSC_VER
-    CloseHandle(m_event);
-#else
-    pthread_cond_destroy(&m_event);
-    pthread_mutex_destroy(&m_mutex);
-#endif
-  }
-
   void signal() {
-#ifdef _MSC_VER
-    SetEvent(m_event);
-#else
-    pthread_mutex_lock(&m_mutex);
-    pthread_cond_broadcast(&m_event);
-    pthread_mutex_unlock(&m_mutex);
-#endif
+    std::lock_guard<std::mutex> lock(m_mutex);
+    m_cv.notify_all();
   }
 
   void wait(double s) {
-#ifdef _MSC_VER
-    WaitForSingleObject(m_event, (long)(s * 1000));
-#else
-    pthread_mutex_lock(&m_mutex);
-    timespec time, remainder;
-    double intpart;
-    time.tv_nsec = (long)(modf(s, &intpart) * 1e9);
-    time.tv_sec = (int)intpart;
-    pthread_cond_timedwait(&m_event, &m_mutex, &time);
-    pthread_mutex_unlock(&m_mutex);
-#endif
+    std::unique_lock<std::mutex> lock(m_mutex);
+    m_cv.wait_for(lock, std::chrono::duration<double>(s));
   }
 
 private:
-#ifdef _MSC_VER
-  HANDLE m_event;
-#else
-  pthread_cond_t m_event;
-  pthread_mutex_t m_mutex;
-#endif
+  std::mutex m_mutex;
+  std::condition_variable m_cv;
 };
 } // namespace FIX
 
