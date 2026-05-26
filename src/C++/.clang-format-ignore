@@ -1,4 +1,3 @@
-dirent_windows.h
 index.h
 pugixml.cpp
 stdint_msvc.h
