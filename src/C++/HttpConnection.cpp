@@ -17,10 +17,8 @@
 **
 ****************************************************************************/
 
-#ifdef _MSC_VER
-#include "stdafx.h"
-#else
 #include "config.h"
+#ifndef _MSC_VER
 #include <poll.h>
 #endif
 
