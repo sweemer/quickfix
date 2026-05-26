@@ -6,15 +6,8 @@
 
 namespace FIX50
 {
-  class Header : public FIX::Header
-  {
-  public:
-  };
-
-  class Trailer : public FIX::Trailer
-  {
-  public:
-  };
+  using Header = FIX::Header;
+  using Trailer = FIX::Trailer;
 
   class Message : public FIX::Message
   {
@@ -29,10 +22,10 @@ namespace FIX50
     Message(Message&& m) = default;
     Message& operator=(Message&&) = default;
     Message& operator=(const Message&) = default;
-    Header& getHeader() { return (Header&)m_header; }
-    const Header& getHeader() const { return (Header&)m_header; }
-    Trailer& getTrailer() { return (Trailer&)m_trailer; }
-    const Trailer& getTrailer() const { return (Trailer&)m_trailer; }
+    Header& getHeader() { return m_header; }
+    const Header& getHeader() const { return m_header; }
+    Trailer& getTrailer() { return m_trailer; }
+    const Trailer& getTrailer() const { return m_trailer; }
   };
 
 }

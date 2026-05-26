@@ -141,9 +141,11 @@ public:
     return field;
   }
 
-  /// Get a field without type checking
-  template <typename T> const T &getField() const EXCEPT(FieldNotFound) {
-    return *reinterpret_cast<const T *>(&getFieldRef(T::tag));
+  /// Get a typed field by materializing it from the stored string value.
+  template <typename T> T getField() const EXCEPT(FieldNotFound) {
+    T field;
+    field.setString(getFieldRef(T::tag).getString());
+    return field;
   }
 
   template <typename F> std::optional<F> getFieldOptional() const {
@@ -329,8 +331,7 @@ private:
   FIELD &get(FIELD &field) const { return (FIELD &)(MAP).getField(field); }                                            \
   bool getIfSet(FIELD &field) const { return (MAP).getFieldIfSet(field); }
 
-#define FIELD_GET_PTR(MAP, FLD) (const FIX::FLD *)MAP.getFieldPtr(FIX::FIELD::FLD)
-#define FIELD_GET_REF(MAP, FLD) (const FIX::FLD &)MAP.getFieldRef(FIX::FIELD::FLD)
+#define FIELD_GET_REF(MAP, FLD) ((MAP).getField<FIX::FLD>())
 #define FIELD_THROW_IF_NOT_FOUND(MAP, FLD)                                                                             \
   if (!(MAP).isSetField(FIX::FIELD::FLD))                                                                              \
   throw FieldNotFound(FIX::FIELD::FLD)

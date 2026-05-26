@@ -978,22 +978,22 @@ void Session::populateRejectReason(Message &reject, int field, const std::string
 void Session::populateRejectReason(Message &reject, const std::string &text) { reject.setField(Text(text)); }
 
 bool Session::verify(const Message &msg, bool checkTooHigh, bool checkTooLow) {
-  const MsgType *pMsgType = 0;
-  const MsgSeqNum *pMsgSeqNum = 0;
+  MsgType msgType;
 
   try {
     const Header &header = msg.getHeader();
 
-    pMsgType = FIELD_GET_PTR(header, MsgType);
-    const SenderCompID &senderCompID = FIELD_GET_REF(header, SenderCompID);
-    const TargetCompID &targetCompID = FIELD_GET_REF(header, TargetCompID);
-    const SendingTime &sendingTime = FIELD_GET_REF(header, SendingTime);
+    msgType = header.getField<MsgType>();
+    const SenderCompID senderCompID = header.getField<SenderCompID>();
+    const TargetCompID targetCompID = header.getField<TargetCompID>();
+    const SendingTime sendingTime = header.getField<SendingTime>();
 
+    MsgSeqNum msgSeqNum;
     if (checkTooHigh || checkTooLow) {
-      pMsgSeqNum = FIELD_GET_PTR(header, MsgSeqNum);
+      msgSeqNum = header.getField<MsgSeqNum>();
     }
 
-    if (!validLogonState(*pMsgType)) {
+    if (!validLogonState(msgType)) {
       throw std::logic_error("Logon state is not valid for message");
     }
 
@@ -1006,10 +1006,10 @@ bool Session::verify(const Message &msg, bool checkTooHigh, bool checkTooLow) {
       return false;
     }
 
-    if (checkTooHigh && isTargetTooHigh(*pMsgSeqNum)) {
+    if (checkTooHigh && isTargetTooHigh(msgSeqNum)) {
       doTargetTooHigh(msg);
       return false;
-    } else if (checkTooLow && isTargetTooLow(*pMsgSeqNum)) {
+    } else if (checkTooLow && isTargetTooLow(msgSeqNum)) {
       doTargetTooLow(msg);
       return false;
     }
@@ -1017,7 +1017,7 @@ bool Session::verify(const Message &msg, bool checkTooHigh, bool checkTooLow) {
     if ((checkTooHigh || checkTooLow) && m_state.resendRequested()) {
       SessionState::ResendRange range = m_state.resendRange();
 
-      if (*pMsgSeqNum >= range.second) {
+      if (msgSeqNum >= range.second) {
         m_state.onEvent(
             "ResendRequest for messages FROM: " + SEQNUM_CONVERTOR::convert(range.first)
             + " TO: " + SEQNUM_CONVERTOR::convert(range.second) + " has been satisfied.");
@@ -1033,7 +1033,7 @@ bool Session::verify(const Message &msg, bool checkTooHigh, bool checkTooLow) {
   m_state.lastReceivedTime(m_timestamper());
   m_state.testRequest(0);
 
-  fromCallback(pMsgType ? *pMsgType : MsgType(), msg, m_sessionID);
+  fromCallback(msgType, msg, m_sessionID);
   return true;
 }
 

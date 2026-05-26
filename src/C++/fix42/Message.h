@@ -6,45 +6,8 @@
 
 namespace FIX42
 {
-  class Header : public FIX::Header
-  {
-  public:
-    FIELD_SET(*this, FIX::BeginString);
-    FIELD_SET(*this, FIX::BodyLength);
-    FIELD_SET(*this, FIX::MsgType);
-    FIELD_SET(*this, FIX::SenderCompID);
-    FIELD_SET(*this, FIX::TargetCompID);
-    FIELD_SET(*this, FIX::OnBehalfOfCompID);
-    FIELD_SET(*this, FIX::DeliverToCompID);
-    FIELD_SET(*this, FIX::SecureDataLen);
-    FIELD_SET(*this, FIX::SecureData);
-    FIELD_SET(*this, FIX::MsgSeqNum);
-    FIELD_SET(*this, FIX::SenderSubID);
-    FIELD_SET(*this, FIX::SenderLocationID);
-    FIELD_SET(*this, FIX::TargetSubID);
-    FIELD_SET(*this, FIX::TargetLocationID);
-    FIELD_SET(*this, FIX::OnBehalfOfSubID);
-    FIELD_SET(*this, FIX::OnBehalfOfLocationID);
-    FIELD_SET(*this, FIX::DeliverToSubID);
-    FIELD_SET(*this, FIX::DeliverToLocationID);
-    FIELD_SET(*this, FIX::PossDupFlag);
-    FIELD_SET(*this, FIX::PossResend);
-    FIELD_SET(*this, FIX::SendingTime);
-    FIELD_SET(*this, FIX::OrigSendingTime);
-    FIELD_SET(*this, FIX::XmlDataLen);
-    FIELD_SET(*this, FIX::XmlData);
-    FIELD_SET(*this, FIX::MessageEncoding);
-    FIELD_SET(*this, FIX::LastMsgSeqNumProcessed);
-    FIELD_SET(*this, FIX::OnBehalfOfSendingTime);
-  };
-
-  class Trailer : public FIX::Trailer
-  {
-  public:
-    FIELD_SET(*this, FIX::SignatureLength);
-    FIELD_SET(*this, FIX::Signature);
-    FIELD_SET(*this, FIX::CheckSum);
-  };
+  using Header = FIX::Header;
+  using Trailer = FIX::Trailer;
 
   class Message : public FIX::Message
   {
@@ -59,10 +22,10 @@ namespace FIX42
     Message(Message&& m) = default;
     Message& operator=(Message&&) = default;
     Message& operator=(const Message&) = default;
-    Header& getHeader() { return (Header&)m_header; }
-    const Header& getHeader() const { return (Header&)m_header; }
-    Trailer& getTrailer() { return (Trailer&)m_trailer; }
-    const Trailer& getTrailer() const { return (Trailer&)m_trailer; }
+    Header& getHeader() { return m_header; }
+    const Header& getHeader() const { return m_header; }
+    Trailer& getTrailer() { return m_trailer; }
+    const Trailer& getTrailer() const { return m_trailer; }
   };
 
 }

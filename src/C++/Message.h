@@ -64,6 +64,45 @@ public:
 
   bool hasGroup(const FIX::Group &group) const { return FieldMap::hasGroup(group.field()); }
   bool hasGroup(unsigned num, const FIX::Group &group) const { return FieldMap::hasGroup(num, group.field()); }
+
+  FIELD_SET(*this, FIX::BeginString);
+  FIELD_SET(*this, FIX::BodyLength);
+  FIELD_SET(*this, FIX::MsgType);
+  FIELD_SET(*this, FIX::ApplVerID);
+  FIELD_SET(*this, FIX::ApplExtID);
+  FIELD_SET(*this, FIX::CstmApplVerID);
+  FIELD_SET(*this, FIX::SenderCompID);
+  FIELD_SET(*this, FIX::TargetCompID);
+  FIELD_SET(*this, FIX::OnBehalfOfCompID);
+  FIELD_SET(*this, FIX::DeliverToCompID);
+  FIELD_SET(*this, FIX::SecureDataLen);
+  FIELD_SET(*this, FIX::SecureData);
+  FIELD_SET(*this, FIX::MsgSeqNum);
+  FIELD_SET(*this, FIX::SenderSubID);
+  FIELD_SET(*this, FIX::SenderLocationID);
+  FIELD_SET(*this, FIX::TargetSubID);
+  FIELD_SET(*this, FIX::TargetLocationID);
+  FIELD_SET(*this, FIX::OnBehalfOfSubID);
+  FIELD_SET(*this, FIX::OnBehalfOfLocationID);
+  FIELD_SET(*this, FIX::DeliverToSubID);
+  FIELD_SET(*this, FIX::DeliverToLocationID);
+  FIELD_SET(*this, FIX::PossDupFlag);
+  FIELD_SET(*this, FIX::PossResend);
+  FIELD_SET(*this, FIX::SendingTime);
+  FIELD_SET(*this, FIX::OrigSendingTime);
+  FIELD_SET(*this, FIX::XmlDataLen);
+  FIELD_SET(*this, FIX::XmlData);
+  FIELD_SET(*this, FIX::MessageEncoding);
+  FIELD_SET(*this, FIX::LastMsgSeqNumProcessed);
+  FIELD_SET(*this, FIX::OnBehalfOfSendingTime);
+  FIELD_SET(*this, FIX::NoHops);
+  class NoHops : public Group {
+  public:
+    NoHops() : Group(627, 628, message_order(628, 629, 630, 0)) {}
+    FIELD_SET(*this, FIX::HopCompID);
+    FIELD_SET(*this, FIX::HopSendingTime);
+    FIELD_SET(*this, FIX::HopRefID);
+  };
 };
 
 class Trailer : public FieldMap {
@@ -92,6 +131,10 @@ public:
 
   bool hasGroup(const FIX::Group &group) const { return FieldMap::hasGroup(group.field()); }
   bool hasGroup(unsigned num, const FIX::Group &group) const { return FieldMap::hasGroup(num, group.field()); }
+
+  FIELD_SET(*this, FIX::SignatureLength);
+  FIELD_SET(*this, FIX::Signature);
+  FIELD_SET(*this, FIX::CheckSum);
 };
 
 /**

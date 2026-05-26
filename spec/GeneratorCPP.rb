@@ -40,6 +40,7 @@ class GeneratorCPP
   end
 
   def field(name, number)
+    return if @in_header_trailer
     @f.indent
     @f.puts "FIELD_SET(*this, FIX::" + name + ");"
     @f.dedent
@@ -47,28 +48,23 @@ class GeneratorCPP
 
   def headerStart
     @f.indent
-    @f.puts "class Header : public FIX::Header"
-    @f.puts "{"
-    @f.puts "public:"
+    @f.puts "using Header = FIX::Header;"
+    @f.puts "using Trailer = FIX::Trailer;"
+    @f.puts
+    @f.dedent
+    @in_header_trailer = true
   end
 
   def headerEnd
-    @f.puts "};"
-    @f.puts
-    @f.dedent
+    @in_header_trailer = false
   end
 
   def trailerStart
-    @f.indent
-    @f.puts "class Trailer : public FIX::Trailer"
-    @f.puts "{"
-    @f.puts "public:"
+    @in_header_trailer = true
   end
 
   def trailerEnd
-    @f.puts "};"
-    @f.puts
-    @f.dedent
+    @in_header_trailer = false
   end
 
   def baseMessageStart
@@ -91,10 +87,10 @@ class GeneratorCPP
     @f.puts "Message(Message&& m) = default;"
     @f.puts "Message& operator=(Message&&) = default;"
     @f.puts "Message& operator=(const Message&) = default;"
-    @f.puts "Header& getHeader() { return (Header&)m_header; }"
-    @f.puts "const Header& getHeader() const { return (Header&)m_header; }"
-    @f.puts "Trailer& getTrailer() { return (Trailer&)m_trailer; }"
-    @f.puts "const Trailer& getTrailer() const { return (Trailer&)m_trailer; }"
+    @f.puts "Header& getHeader() { return m_header; }"
+    @f.puts "const Header& getHeader() const { return m_header; }"
+    @f.puts "Trailer& getTrailer() { return m_trailer; }"
+    @f.puts "const Trailer& getTrailer() const { return m_trailer; }"
     @f.dedent
     @f.puts "};"
     @f.puts
