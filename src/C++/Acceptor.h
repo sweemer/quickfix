@@ -22,10 +22,6 @@
 #ifndef FIX_ACCEPTOR_H
 #define FIX_ACCEPTOR_H
 
-#ifdef _MSC_VER
-#pragma warning(disable : 4503 4355 4786 4290)
-#endif
-
 #include "Application.h"
 #include "Exceptions.h"
 #include "Log.h"

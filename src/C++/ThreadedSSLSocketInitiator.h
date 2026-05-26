@@ -119,10 +119,6 @@
 
 #if (HAVE_SSL > 0)
 
-#ifdef _MSC_VER
-#pragma warning(disable : 4503 4355 4786 4290)
-#endif
-
 #include "HostDetailsProvider.h"
 #include "Initiator.h"
 #include "ThreadedSSLSocketConnection.h"

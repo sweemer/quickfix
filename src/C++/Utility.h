@@ -23,10 +23,6 @@
 #define FIX_UTILITY_H
 
 #ifdef _MSC_VER
-#pragma warning(disable : 4503 4355 4786 4290)
-#endif
-
-#ifdef _MSC_VER
 #define PRAGMA_PUSH(x) __pragma(warning(push)) __pragma(warning(disable : x))
 #define PRAGMA_POP __pragma(warning(pop))
 #else

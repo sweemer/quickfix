@@ -22,10 +22,6 @@
 #ifndef FIX_DATABASECONNECTIONID_H
 #define FIX_DATABASECONNECTIONID_H
 
-#ifdef _MSC_VER
-#pragma warning(disable : 4503 4355 4786 4290)
-#endif
-
 #include <map>
 #include <string>
 

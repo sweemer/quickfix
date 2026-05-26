@@ -22,10 +22,6 @@
 #ifndef FIX_HTTPMESSAGE
 #define FIX_HTTPMESSAGE
 
-#ifdef _MSC_VER
-#pragma warning(disable : 4786)
-#endif
-
 #include "Exceptions.h"
 #include <map>
 

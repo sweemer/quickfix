@@ -22,10 +22,6 @@
 #ifndef FIX_FIELD
 #define FIX_FIELD
 
-#ifdef _MSC_VER
-#pragma warning(disable : 4786)
-#endif
-
 #include "FieldConvertors.h"
 #include "FieldNumbers.h"
 #include "FieldTypes.h"

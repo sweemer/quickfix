@@ -22,10 +22,6 @@
 #ifndef FIX_SOCKETCONNECTOR_H
 #define FIX_SOCKETCONNECTOR_H
 
-#ifdef _MSC_VER
-#pragma warning(disable : 4503 4355 4786 4290)
-#endif
-
 #include "SocketMonitor.h"
 #include "Utility.h"
 #include <string>
