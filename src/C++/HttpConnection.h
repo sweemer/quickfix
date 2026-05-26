@@ -27,7 +27,7 @@
 #endif
 
 #include "HttpParser.h"
-#include <stdio.h>
+#include <cstdio>
 
 namespace FIX {
 class HttpMessage;

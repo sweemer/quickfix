@@ -26,7 +26,7 @@
 #include "FieldTypes.h"
 #include "Utility.h"
 #include "config-all.h"
-#include <assert.h>
+#include <cassert>
 #include <cstdio>
 #include <iomanip>
 #include <iterator>

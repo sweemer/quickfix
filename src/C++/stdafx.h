@@ -13,7 +13,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 
 #include "config.h"
-#include <stdio.h>
+#include <cstdio>
 
 #define TERMINATE_IN_STD 1
 

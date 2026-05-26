@@ -30,13 +30,13 @@
 #include <sys/conf.h>
 #endif
 #include <algorithm>
+#include <cmath>
 #include <cstdarg>
+#include <cstdio>
+#include <cstring>
 #include <fstream>
 #include <iostream>
-#include <math.h>
 #include <sstream>
-#include <stdio.h>
-#include <string.h>
 
 namespace FIX {
 std::string error_strerror(decltype(errno) error_number) {

@@ -27,11 +27,11 @@
 #pragma warning(disable : 4503 4355 4786 4290)
 #endif
 
-#include <stdint.h>
+#include <cstdint>
 
 #include "Utility.h"
+#include <ctime>
 #include <string>
-#include <time.h>
 
 #include <chrono>
 

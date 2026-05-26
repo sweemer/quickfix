@@ -28,7 +28,7 @@
 #include <SocketConnector.h>
 #include <SocketServer.h>
 #ifdef _MSC_VER
-#include <stdlib.h>
+#include <cstdlib>
 #endif
 
 #include "catch_amalgamated.hpp"

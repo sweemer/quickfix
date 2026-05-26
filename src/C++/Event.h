@@ -23,10 +23,9 @@
 #define FIX_EVENT_H
 
 #include "Utility.h"
-#include <math.h>
+#include <cmath>
 
 #ifndef _MSC_VER
-#include <cmath>
 #include <pthread.h>
 #endif
 
