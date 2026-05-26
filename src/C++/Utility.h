@@ -87,7 +87,6 @@
 #include <netdb.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
-#include <pthread.h>
 #include <signal.h>
 #include <stdlib.h>
 #include <sys/ioctl.h>
@@ -105,6 +104,7 @@
 #endif
 
 #include <cctype>
+#include <chrono>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -112,6 +112,7 @@
 #include <memory>
 #include <set>
 #include <string>
+#include <thread>
 
 namespace FIX {
 #ifdef _MSC_VER
@@ -178,26 +179,21 @@ std::pair<socket_handle, socket_handle> socket_createpair();
 tm time_gmtime(const time_t *t);
 tm time_localtime(const time_t *t);
 
-#ifdef _MSC_VER
-typedef _beginthreadex_proc_type THREAD_START_ROUTINE;
-#define THREAD_PROC unsigned int _stdcall
-#else
-extern "C" {
-typedef void *(THREAD_START_ROUTINE)(void *);
-}
+using THREAD_START_ROUTINE = void *(void *);
 #define THREAD_PROC void *
-#endif
 
-#ifdef _MSC_VER
-typedef HANDLE thread_id;
-#else
-typedef pthread_t thread_id;
-#endif
+struct thread_id {
+  std::thread *handle = nullptr;
 
-bool thread_spawn(THREAD_START_ROUTINE func, void *var, thread_id &thread);
-bool thread_spawn(THREAD_START_ROUTINE func, void *var);
-void thread_join(thread_id thread);
-void thread_detach(thread_id thread);
+  thread_id() = default;
+  thread_id(int) noexcept {}
+  explicit operator bool() const noexcept { return handle != nullptr; }
+};
+
+bool thread_spawn(THREAD_START_ROUTINE *func, void *var, thread_id &thread);
+bool thread_spawn(THREAD_START_ROUTINE *func, void *var);
+void thread_join(thread_id &thread);
+void thread_detach(thread_id &thread);
 thread_id thread_self();
 
 void process_sleep(double s);

@@ -33,7 +33,6 @@
 #include <cstdarg>
 #include <fstream>
 #include <iostream>
-#include <math.h>
 #include <sstream>
 #include <stdio.h>
 #include <string.h>
@@ -502,67 +501,49 @@ tm time_localtime(const time_t *t) {
 #endif
 }
 
-bool thread_spawn(THREAD_START_ROUTINE func, void *var, thread_id &thread) {
-#ifdef _MSC_VER
-  thread_id result = 0;
-  unsigned int id = 0;
-  result = reinterpret_cast<thread_id>(_beginthreadex(NULL, 0, func, var, 0, &id));
-  if (result == 0) {
+bool thread_spawn(THREAD_START_ROUTINE *func, void *var, thread_id &thread) {
+  try {
+    thread.handle = new std::thread(func, var);
+    return true;
+  } catch (...) {
     return false;
   }
-#else
-  thread_id result = 0;
-  if (pthread_create(&result, 0, func, var) != 0) {
+}
+
+bool thread_spawn(THREAD_START_ROUTINE *func, void *var) {
+  try {
+    std::thread t(func, var);
+    t.detach();
+    return true;
+  } catch (...) {
     return false;
   }
-#endif
-  thread = result;
-  return true;
 }
 
-bool thread_spawn(THREAD_START_ROUTINE func, void *var) {
-  thread_id thread = 0;
-  return thread_spawn(func, var, thread);
+void thread_join(thread_id &thread) {
+  if (thread.handle) {
+    if (thread.handle->joinable())
+      thread.handle->join();
+    delete thread.handle;
+    thread.handle = nullptr;
+  }
 }
 
-void thread_join(thread_id thread) {
-#ifdef _MSC_VER
-  WaitForSingleObject((void *)thread, INFINITE);
-  CloseHandle(thread);
-#else
-  pthread_join((pthread_t)thread, 0);
-#endif
-}
-
-void thread_detach(thread_id thread) {
-#ifdef _MSC_VER
-  CloseHandle(thread);
-#else
-  pthread_t t = thread;
-  pthread_detach(t);
-#endif
+void thread_detach(thread_id &thread) {
+  if (thread.handle) {
+    if (thread.handle->joinable())
+      thread.handle->detach();
+    delete thread.handle;
+    thread.handle = nullptr;
+  }
 }
 
 thread_id thread_self() {
-#ifdef _MSC_VER
-  return GetCurrentThread();
-#else
-  return pthread_self();
-#endif
+  return {};
 }
 
 void process_sleep(double s) {
-#ifdef _MSC_VER
-  Sleep((long)(s * 1000));
-#else
-  timespec time, remainder;
-  double intpart;
-  time.tv_nsec = (long)(modf(s, &intpart) * 1e9);
-  time.tv_sec = (int)intpart;
-  while (nanosleep(&time, &remainder) == -1) {
-    time = remainder;
-  }
-#endif
+  std::this_thread::sleep_for(std::chrono::duration<double>(s));
 }
 
 std::string file_separator() {
