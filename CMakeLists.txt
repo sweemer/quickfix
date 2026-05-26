@@ -2,8 +2,6 @@ cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
 
 set (quickfix_PROJECT_NAME quickfix)
 
-add_definitions(-DNOMINMAX)
-
 # Large file support
 if(UNIX)
   add_definitions(-D_FILE_OFFSET_BITS=64)

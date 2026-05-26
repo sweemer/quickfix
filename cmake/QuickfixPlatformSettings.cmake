@@ -1,3 +1,5 @@
+add_definitions(-DNOMINMAX)
+
 if( MSVC )
 add_compile_definitions(
     WIN32_LEAN_AND_MEAN
