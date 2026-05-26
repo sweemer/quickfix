@@ -22,10 +22,6 @@
 #ifndef FIX_MESSAGE
 #define FIX_MESSAGE
 
-#ifdef _MSC_VER
-#pragma warning(disable : 4786)
-#endif
-
 #include "DataDictionary.h"
 #include "FieldMap.h"
 #include "Fields.h"

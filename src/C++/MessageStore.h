@@ -22,10 +22,6 @@
 #ifndef FIX_MESSAGESTORE_H
 #define FIX_MESSAGESTORE_H
 
-#ifdef _MSC_VER
-#pragma warning(disable : 4503 4355 4786 4290)
-#endif
-
 #include "Message.h"
 #include <map>
 #include <string>

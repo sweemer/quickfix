@@ -22,10 +22,6 @@
 #ifndef FIX_THREADEDSOCKETACCEPTOR_H
 #define FIX_THREADEDSOCKETACCEPTOR_H
 
-#ifdef _MSC_VER
-#pragma warning(disable : 4503 4355 4786 4290)
-#endif
-
 #include "Acceptor.h"
 #include "Mutex.h"
 #include "ThreadedSocketConnection.h"

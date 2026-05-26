@@ -22,10 +22,6 @@
 #ifndef FIX_DATADICTIONARYPROVIDER_H
 #define FIX_DATADICTIONARYPROVIDER_H
 
-#ifdef _MSC_VER
-#pragma warning(disable : 4503 4355 4786 4290)
-#endif
-
 #include "DataDictionary.h"
 #include "Exceptions.h"
 #include "Utility.h"

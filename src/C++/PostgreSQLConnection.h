@@ -29,7 +29,6 @@
 #ifdef HAVE_POSTGRESQL
 
 #ifdef _MSC_VER
-#pragma warning(disable : 4503 4355 4786 4290)
 #pragma comment(lib, "libpq")
 #endif
 

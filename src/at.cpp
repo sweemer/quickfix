@@ -17,9 +17,6 @@
 **
 ****************************************************************************/
 
-#ifdef _MSC_VER
-#pragma warning(disable : 4503)
-#endif
 #include "config.h"
 
 #include "FileStore.h"

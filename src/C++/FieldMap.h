@@ -22,10 +22,6 @@
 #ifndef FIX_FIELDMAP
 #define FIX_FIELDMAP
 
-#ifdef _MSC_VER
-#pragma warning(disable : 4786)
-#endif
-
 #include "Exceptions.h"
 #include "Field.h"
 #include "MessageSorters.h"

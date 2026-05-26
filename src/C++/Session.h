@@ -22,10 +22,6 @@
 #ifndef FIX_SESSION_H
 #define FIX_SESSION_H
 
-#ifdef _MSC_VER
-#pragma warning(disable : 4503 4355 4786 4290)
-#endif
-
 #include "Application.h"
 #include "DataDictionaryProvider.h"
 #include "Fields.h"

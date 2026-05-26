@@ -22,10 +22,6 @@
 #ifndef FIX_GROUP
 #define FIX_GROUP
 
-#ifdef _MSC_VER
-#pragma warning(disable : 4786)
-#endif
-
 #include "FieldMap.h"
 #include "Fields.h"
 #include <vector>

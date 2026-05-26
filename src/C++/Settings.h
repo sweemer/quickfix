@@ -22,10 +22,6 @@
 #ifndef FIX_SETTINGS_H
 #define FIX_SETTINGS_H
 
-#ifdef _MSC_VER
-#pragma warning(disable : 4503 4355 4786 4290)
-#endif
-
 #include "Dictionary.h"
 #include <iostream>
 #include <map>

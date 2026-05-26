@@ -22,10 +22,6 @@
 #ifndef FIX_THREADEDSOCKETINITIATOR_H
 #define FIX_THREADEDSOCKETINITIATOR_H
 
-#ifdef _MSC_VER
-#pragma warning(disable : 4503 4355 4786 4290)
-#endif
-
 #include "HostDetailsProvider.h"
 #include "Initiator.h"
 #include "ThreadedSocketConnection.h"

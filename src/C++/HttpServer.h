@@ -22,10 +22,6 @@
 #ifndef FIX_HTTPSERVER_H
 #define FIX_HTTPSERVER_H
 
-#ifdef _MSC_VER
-#pragma warning(disable : 4503 4355 4786 4290)
-#endif
-
 #include "Exceptions.h"
 #include "Mutex.h"
 #include "SessionSettings.h"
