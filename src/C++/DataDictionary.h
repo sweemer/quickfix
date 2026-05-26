@@ -30,9 +30,9 @@
 #include "Exceptions.h"
 #include "FieldMap.h"
 #include "Fields.h"
+#include <cstring>
 #include <map>
 #include <set>
-#include <cstring>
 
 namespace FIX {
 class FieldMap;

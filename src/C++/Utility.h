@@ -71,9 +71,9 @@
 #ifdef _MSC_VER
 /////////////////////////////////////////////
 #include <Winsock2.h>
+#include <ctime>
 #include <direct.h>
 #include <process.h>
-#include <ctime>
 #define INVALID_SOCKET_HANDLE INVALID_SOCKET
 #define BIND_SOCKET_ERROR SOCKET_ERROR
 #define LISTEN_SOCKET_ERROR SOCKET_ERROR
@@ -83,19 +83,19 @@
 /////////////////////////////////////////////
 #include <arpa/inet.h>
 #include <cerrno>
+#include <csignal>
+#include <cstdlib>
+#include <ctime>
 #include <fcntl.h>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #include <pthread.h>
-#include <csignal>
-#include <cstdlib>
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <sys/types.h>
-#include <ctime>
 #include <unistd.h>
 #define INVALID_SOCKET_HANDLE -1
 #define BIND_SOCKET_ERROR -1

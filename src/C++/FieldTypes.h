@@ -30,8 +30,8 @@
 #include <cstdint>
 
 #include "Utility.h"
-#include <string>
 #include <ctime>
+#include <string>
 
 #include <chrono>
 

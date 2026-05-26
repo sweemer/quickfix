@@ -1,11 +1,11 @@
 #ifndef FIX_HOSTDETAILSPROVIDER_H
 #define FIX_HOSTDETAILSPROVIDER_H
 
+#include <ctime>
 #include <functional>
 #include <map>
 #include <optional>
 #include <string>
-#include <ctime>
 
 namespace FIX {
 class Dictionary;
