@@ -24,7 +24,7 @@
 #endif
 
 #include "FieldConvertors.h"
-#include <math.h>
+#include <cmath>
 
 namespace FIX {
 

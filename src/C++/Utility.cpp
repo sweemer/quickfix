@@ -33,10 +33,10 @@
 #include <cstdarg>
 #include <fstream>
 #include <iostream>
-#include <math.h>
+#include <cmath>
 #include <sstream>
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 
 namespace FIX {
 std::string error_strerror(decltype(errno) error_number) {

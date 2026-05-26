@@ -73,7 +73,7 @@
 #include <Winsock2.h>
 #include <direct.h>
 #include <process.h>
-#include <time.h>
+#include <ctime>
 #define INVALID_SOCKET_HANDLE INVALID_SOCKET
 #define BIND_SOCKET_ERROR SOCKET_ERROR
 #define LISTEN_SOCKET_ERROR SOCKET_ERROR
@@ -82,20 +82,20 @@
 #else
 /////////////////////////////////////////////
 #include <arpa/inet.h>
-#include <errno.h>
+#include <cerrno>
 #include <fcntl.h>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #include <pthread.h>
-#include <signal.h>
-#include <stdlib.h>
+#include <csignal>
+#include <cstdlib>
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <sys/types.h>
-#include <time.h>
+#include <ctime>
 #include <unistd.h>
 #define INVALID_SOCKET_HANDLE -1
 #define BIND_SOCKET_ERROR -1

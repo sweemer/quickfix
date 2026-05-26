@@ -32,7 +32,7 @@
 #include "Fields.h"
 #include <map>
 #include <set>
-#include <string.h>
+#include <cstring>
 
 namespace FIX {
 class FieldMap;

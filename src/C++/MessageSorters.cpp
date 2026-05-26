@@ -25,7 +25,7 @@
 
 #include "MessageSorters.h"
 
-#include <string.h>
+#include <cstring>
 
 namespace FIX {
 message_order::message_order(int first, ...)

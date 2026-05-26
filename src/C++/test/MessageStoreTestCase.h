@@ -24,7 +24,7 @@
 #include <fix42/Logon.h>
 #include <fix42/NewOrderSingle.h>
 
-#include <limits.h>
+#include <climits>
 
 #define CHECK_MESSAGE_STORE_SET_GET                                                                                    \
   FIX42::Logon logon;                                                                                                  \

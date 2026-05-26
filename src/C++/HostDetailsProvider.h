@@ -5,7 +5,7 @@
 #include <map>
 #include <optional>
 #include <string>
-#include <time.h>
+#include <ctime>
 
 namespace FIX {
 class Dictionary;
