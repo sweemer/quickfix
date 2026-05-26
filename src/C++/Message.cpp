@@ -17,11 +17,7 @@
 **
 ****************************************************************************/
 
-#ifdef _MSC_VER
-#include "stdafx.h"
-#else
 #include "config.h"
-#endif
 
 #include "Message.h"
 #include "Utility.h"
@@ -227,7 +223,9 @@ std::string &Message::toString(std::string &str, int beginStringField, int bodyL
     return sum;
   };
   int bodyLengthFieldContrib = sumAsciiDigits(bodyLengthField) + '=' + sumAsciiDigits(bodyLength) + '\001';
-  int totalChecksum = (headerLengthAndTotal.total + bodyLengthAndTotal.total + trailerLengthAndTotal.total + bodyLengthFieldContrib) % 256;
+  int totalChecksum
+      = (headerLengthAndTotal.total + bodyLengthAndTotal.total + trailerLengthAndTotal.total + bodyLengthFieldContrib)
+        % 256;
 
   m_header.setField(IntField(bodyLengthField, bodyLength));
   m_trailer.setField(CheckSumField(checkSumField, totalChecksum));

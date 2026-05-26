@@ -1,3 +1,15 @@
+add_definitions(-DNOMINMAX)
+
+if( MSVC )
+add_compile_definitions(
+    WIN32_LEAN_AND_MEAN
+    _WINSOCK_DEPRECATED_NO_WARNINGS
+    _CRT_SECURE_NO_WARNINGS
+    _WIN32_DCOM
+    TERMINATE_IN_STD=1
+)
+endif()
+
 #AIX do something like
 #export OBJECT_MODE=64
 #mkdir build

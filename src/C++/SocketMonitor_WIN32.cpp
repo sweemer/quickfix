@@ -19,7 +19,7 @@
 
 #ifdef _MSC_VER
 
-#include "stdafx.h"
+#include "config.h"
 
 #include "SocketMonitor.h"
 #include "Utility.h"

@@ -72,7 +72,6 @@ COMMAND ${CMAKE_COMMAND} -E copy_if_different ${PROJECT_SOURCE_DIR}/src/C++/Sock
 COMMAND ${CMAKE_COMMAND} -E copy_if_different ${PROJECT_SOURCE_DIR}/src/C++/SocketMonitor_UNIX.h ${PROJECT_SOURCE_DIR}/include/quickfix/SocketMonitor_UNIX.h
 COMMAND ${CMAKE_COMMAND} -E copy_if_different ${PROJECT_SOURCE_DIR}/src/C++/SocketMonitor_WIN32.h ${PROJECT_SOURCE_DIR}/include/quickfix/SocketMonitor_WIN32.h
 COMMAND ${CMAKE_COMMAND} -E copy_if_different ${PROJECT_SOURCE_DIR}/src/C++/SocketServer.h ${PROJECT_SOURCE_DIR}/include/quickfix/SocketServer.h
-COMMAND ${CMAKE_COMMAND} -E copy_if_different ${PROJECT_SOURCE_DIR}/src/C++/stdafx.h ${PROJECT_SOURCE_DIR}/include/quickfix/stdafx.h
 COMMAND ${CMAKE_COMMAND} -E copy_if_different ${PROJECT_SOURCE_DIR}/src/C++/stdint_msvc.h ${PROJECT_SOURCE_DIR}/include/quickfix/stdint_msvc.h
 COMMAND ${CMAKE_COMMAND} -E copy_if_different ${PROJECT_SOURCE_DIR}/src/C++/strptime.h ${PROJECT_SOURCE_DIR}/include/quickfix/strptime.h
 COMMAND ${CMAKE_COMMAND} -E copy_if_different ${PROJECT_SOURCE_DIR}/src/C++/ThreadedSocketAcceptor.h ${PROJECT_SOURCE_DIR}/include/quickfix/ThreadedSocketAcceptor.h
