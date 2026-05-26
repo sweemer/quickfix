@@ -117,6 +117,7 @@
 
 #if (HAVE_SSL > 0)
 
+#include <filesystem>
 #include <vector>
 
 #include "Mutex.h"
@@ -701,13 +702,6 @@ int typeofSSLAlgo(X509 *pCert, EVP_PKEY *pKey) {
 STACK_OF(X509_NAME) * findCAList(const char *cpCAfile, const char *cpCApath) {
   STACK_OF(X509_NAME) * skCAList;
   STACK_OF(X509_NAME) * sk;
-#ifndef HAVE_ACE_DIRENT
-  DIR *dir;
-  struct dirent *direntry;
-#else
-  ACE_DIR *dir;
-  struct ACE_DIRENT *direntry;
-#endif
   char *cp;
   int n;
 
@@ -735,18 +729,9 @@ STACK_OF(X509_NAME) * findCAList(const char *cpCAfile, const char *cpCApath) {
    * Process CA certificate path files
    */
   if (cpCApath != 0) {
-#ifndef HAVE_ACE_DIRENT
-    dir = opendir(cpCApath);
-#else
-    dir = ACE_OS::opendir(cpCApath);
-#endif
-
-#ifndef HAVE_ACE_DIRENT
-    while ((direntry = readdir(dir)) != 0) {
-#else
-    while ((direntry = ACE_OS::readdir(dir)) != 0) {
-#endif
-      cp = string_concat(cpCApath, SLASH, direntry->d_name, 0);
+    for (const auto& entry : std::filesystem::directory_iterator(cpCApath)) {
+      auto name = entry.path().filename().string();
+      cp = string_concat(cpCApath, SLASH, name.c_str(), 0);
       sk = SSL_load_client_CA_file(cp);
       delete[] cp;
       for (n = 0; sk != 0 && n < sk_X509_NAME_num(sk); n++) {
@@ -757,11 +742,6 @@ STACK_OF(X509_NAME) * findCAList(const char *cpCAfile, const char *cpCApath) {
         }
       }
     }
-#ifndef HAVE_ACE_DIRENT
-    closedir(dir);
-#else
-    ACE_OS::closedir(dir);
-#endif
   }
 
   /*

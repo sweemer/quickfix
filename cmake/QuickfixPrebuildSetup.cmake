@@ -1,6 +1,6 @@
 # Needed to build examples
 
-add_custom_target(QUICKFIX_HEADERS_COPY ALL 
+add_custom_target(QUICKFIX_HEADERS_COPY ALL
 COMMAND ${CMAKE_COMMAND} -E make_directory ${PROJECT_SOURCE_DIR}/include/
 COMMAND ${CMAKE_COMMAND} -E make_directory ${PROJECT_SOURCE_DIR}/include/quickfix
 COMMAND ${CMAKE_COMMAND} -E copy_if_different ${PROJECT_SOURCE_DIR}/src/C++/Acceptor.h ${PROJECT_SOURCE_DIR}/include/quickfix/Acceptor.h
@@ -11,7 +11,6 @@ COMMAND ${CMAKE_COMMAND} -E copy_if_different ${PROJECT_SOURCE_DIR}/src/C++/Data
 COMMAND ${CMAKE_COMMAND} -E copy_if_different ${PROJECT_SOURCE_DIR}/src/C++/DataDictionary.h ${PROJECT_SOURCE_DIR}/include/quickfix/DataDictionary.h
 COMMAND ${CMAKE_COMMAND} -E copy_if_different ${PROJECT_SOURCE_DIR}/src/C++/DataDictionaryProvider.h ${PROJECT_SOURCE_DIR}/include/quickfix/DataDictionaryProvider.h
 COMMAND ${CMAKE_COMMAND} -E copy_if_different ${PROJECT_SOURCE_DIR}/src/C++/Dictionary.h ${PROJECT_SOURCE_DIR}/include/quickfix/Dictionary.h
-COMMAND ${CMAKE_COMMAND} -E copy_if_different ${PROJECT_SOURCE_DIR}/src/C++/dirent_windows.h ${PROJECT_SOURCE_DIR}/include/quickfix/dirent_windows.h
 COMMAND ${CMAKE_COMMAND} -E copy_if_different ${PROJECT_SOURCE_DIR}/src/C++/DOMDocument.h ${PROJECT_SOURCE_DIR}/include/quickfix/DOMDocument.h
 COMMAND ${CMAKE_COMMAND} -E copy_if_different ${PROJECT_SOURCE_DIR}/src/C++/Event.h ${PROJECT_SOURCE_DIR}/include/quickfix/Event.h
 COMMAND ${CMAKE_COMMAND} -E copy_if_different ${PROJECT_SOURCE_DIR}/src/C++/Except.h ${PROJECT_SOURCE_DIR}/include/quickfix/Except.h
