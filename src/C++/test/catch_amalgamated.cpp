@@ -1,3 +1,5 @@
+// NOLINTBEGIN
+
 //              Copyright Catch2 Authors
 // Distributed under the Boost Software License, Version 1.0.
 //   (See accompanying file LICENSE.txt or copy at
@@ -10793,3 +10795,5 @@ namespace Catch {
 #if defined(_MSC_VER)
 #pragma warning(pop)
 #endif
+
+// NOLINTEND

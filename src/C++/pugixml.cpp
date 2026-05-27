@@ -1,3 +1,5 @@
+// NOLINTBEGIN
+
 /**
  * pugixml parser - version 1.14
  * --------------------------------------------------------
@@ -13235,3 +13237,5 @@ namespace pugi
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
+
+// NOLINTEND

@@ -1,3 +1,5 @@
+// NOLINTBEGIN
+
 //              Copyright Catch2 Authors
 // Distributed under the Boost Software License, Version 1.0.
 //   (See accompanying file LICENSE.txt or copy at
@@ -13,7 +15,6 @@
 //  ----------------------------------------------------------
 #ifndef CATCH_AMALGAMATED_HPP_INCLUDED
 #define CATCH_AMALGAMATED_HPP_INCLUDED
-
 
 /** \file
  * This is a convenience header for Catch2. It includes **all** of Catch2 headers.
@@ -13141,3 +13142,5 @@ namespace Catch {
 
 #endif // CATCH_ALL_HPP_INCLUDED
 #endif // CATCH_AMALGAMATED_HPP_INCLUDED
+
+// NOLINTEND
