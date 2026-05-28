@@ -51,10 +51,10 @@ public:
   void addApplicationDataDictionary(const ApplVerID &applVerID, std::shared_ptr<DataDictionary>);
 
   void addTransportDataDictionary(const BeginString &beginString, const std::string &path) {
-    addTransportDataDictionary(beginString, std::shared_ptr<DataDictionary>(new DataDictionary(path)));
+    addTransportDataDictionary(beginString, std::make_shared<DataDictionary>(path));
   }
   void addApplicationDataDictionary(const ApplVerID &applVerID, const std::string &path) {
-    addApplicationDataDictionary(applVerID, std::shared_ptr<DataDictionary>(new DataDictionary(path)));
+    addApplicationDataDictionary(applVerID, std::make_shared<DataDictionary>(path));
   }
 
 private:

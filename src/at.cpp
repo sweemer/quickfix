@@ -57,9 +57,9 @@ int main(int argc, char **argv) {
 
     AcceptorPtr pAcceptor;
     if (threaded) {
-      pAcceptor.reset(new FIX::ThreadedSocketAcceptor(application, factory, settings));
+      pAcceptor = std::make_unique<FIX::ThreadedSocketAcceptor>(application, factory, settings);
     } else {
-      pAcceptor.reset(new FIX::SocketAcceptor(application, factory, settings));
+      pAcceptor = std::make_unique<FIX::SocketAcceptor>(application, factory, settings);
     }
 
     pAcceptor->start();

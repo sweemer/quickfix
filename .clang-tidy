@@ -86,8 +86,6 @@ Checks:             >
                       -modernize-deprecated-headers,
                       -modernize-loop-convert,
                       -modernize-macro-to-enum,
-                      -modernize-make-shared,
-                      -modernize-make-unique,
                       -modernize-pass-by-value,
                       -modernize-raw-string-literal,
                       -modernize-return-braced-init-list,
